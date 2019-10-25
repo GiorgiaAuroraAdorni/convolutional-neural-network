@@ -100,16 +100,18 @@ for epoch in range(0, epochs):
     print('Epoch: {}.'.format(epoch))
     permutation = np.random.permutation(n_train)
 
-    for i in range(0, n_train, batch_size):
-        batch_indices = permutation[0:batch_size]
+    for i, sample_index in enumerate(range(0, n_train, batch_size)):
+        batch_indices = permutation[sample_index:sample_index + batch_size]
         batch = [scaled_x_train[batch_indices], y_train_matrix[batch_indices]]
 
         train_loss, _ = session.run([loss, train], feed_dict={X: batch[0], Y: batch[1]})
-        print('Sample {}. Train Loss: {:.2f}.'.format(i, train_loss))
+
+        if i % 50 == 0:
+            print('Iteration {}. Train Loss: {:.2f}.'.format(i, train_loss))
 
     validation_loss = session.run(loss, feed_dict={X: scaled_x_valid, Y: y_valid_matrix})
     print('Validation loss: {}.'.format(validation_loss))
 
     # classification accuracy on the validation set
     validation_accuracy = session.run(accuracy, feed_dict={X: scaled_x_valid, Y: y_valid_matrix})
-    print('Validation accuracy: {:.2f}%.'.format(validation_accuracy))
+    print('Validation accuracy: {:.2f}%.'.format(validation_accuracy * 100))
