@@ -38,6 +38,9 @@ y_test_matrix = (y_test == labels).astype(int)
 X = tf.placeholder(tf.float32, [None, 32, 32, 3])
 Y = tf.placeholder(tf.float32, [None, 10])
 
+# Placeholder that represent the probability to keep each neuron
+dropout = tf.placeholder(tf.float32, [])
+
 # (a) Convolutional layer 1: 32 filters, 3 × 3.
 W_conv1 = tf.Variable(tf.truncated_normal([3, 3, 3, 32], stddev=0.1))
 b_conv1 = tf.Variable(tf.zeros(shape=(32,)))
@@ -51,6 +54,8 @@ A_conv2 = tf.nn.relu(tf.nn.conv2d(A_conv1, W_conv2, strides=[1, 1, 1, 1], paddin
 # (c) Max-pooling layer 1: 2 × 2 windows.
 A_pool1 = tf.nn.max_pool(A_conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
+A_pool1 = tf.nn.dropout(A_pool1, rate=dropout)
+
 # (d) Convolutional layer 3: 64 filters, 3 × 3.
 W_conv3 = tf.Variable(tf.truncated_normal([3, 3, 32, 64], stddev=0.1))
 b_conv3 = tf.Variable(tf.zeros(shape=(64,)))
@@ -63,18 +68,23 @@ A_conv4 = tf.nn.relu(tf.nn.conv2d(A_conv3, W_conv4, strides=[1, 1, 1, 1], paddin
 
 # (f) Max-pooling layer 2: 2 × 2 windows.
 A_pool2 = tf.nn.max_pool(A_conv4, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-A_pool2_flat = tf.reshape(A_pool2, [-1, 8 * 8 * 64]) # ? x 3136
+A_pool2 = tf.nn.dropout(A_pool2, rate=dropout)
+A_pool2_flat = tf.reshape(A_pool2, [-1, 8 * 8 * 64])  # ? x 3136
 
 # (g) Fully connected layer 1: 512 units.
 W_fc1 = tf.Variable(tf.truncated_normal([8 * 8 * 64, 512], stddev=0.1))
 b_fc1 = tf.Variable(tf.zeros(shape=(512,)))
 A_fc1 = tf.nn.relu(tf.matmul(A_pool2_flat, W_fc1) + b_fc1)
 
+A_fc1 = tf.nn.dropout(A_fc1, rate=dropout)
+
+# (h) Softmax output layer.
 W_fc2 = tf.Variable(tf.truncated_normal([512, 10], stddev=0.1))
 b_fc2 = tf.Variable(tf.zeros(shape=(10,)))
 Z = tf.matmul(A_fc1, W_fc2) + b_fc2
 
-# (h) Softmax output layer.
+Z = tf.nn.dropout(Z, rate=dropout)
+
 loss = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=Z)
 loss = tf.reduce_mean(loss)
 
@@ -104,14 +114,14 @@ for epoch in range(0, epochs):
         batch_indices = permutation[sample_index:sample_index + batch_size]
         batch = [scaled_x_train[batch_indices], y_train_matrix[batch_indices]]
 
-        train_loss, _ = session.run([loss, train], feed_dict={X: batch[0], Y: batch[1]})
+        train_loss, _ = session.run([loss, train], feed_dict={X: batch[0], Y: batch[1], dropout: 0.5})
 
         if i % 50 == 0:
             print('Iteration {}. Train Loss: {:.2f}.'.format(i, train_loss))
 
-    validation_loss = session.run(loss, feed_dict={X: scaled_x_valid, Y: y_valid_matrix})
+    validation_loss = session.run(loss, feed_dict={X: scaled_x_valid, Y: y_valid_matrix, dropout: 0})
     print('Validation loss: {}.'.format(validation_loss))
 
     # classification accuracy on the validation set
-    validation_accuracy = session.run(accuracy, feed_dict={X: scaled_x_valid, Y: y_valid_matrix})
+    validation_accuracy = session.run(accuracy, feed_dict={X: scaled_x_valid, Y: y_valid_matrix, dropout: 0})
     print('Validation accuracy: {:.2f}%.'.format(validation_accuracy * 100))
