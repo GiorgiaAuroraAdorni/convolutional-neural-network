@@ -6,9 +6,7 @@ from google.colab import drive
 
 
 def check_dir(out_dir, model_dir):
-
     dir = out_dir + model_dir
-
     set_dir = [dir + 'train.txt',
                dir + 'validation.txt',
                dir + 'test.txt']

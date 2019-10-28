@@ -68,8 +68,21 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	\section{Introduction}
-	The scope of this {project} is to implement a convolutional neural network 
-	to classify the images in the CIFAR-10 dataset.
+	The scope of this project is to implement a convolutional neural network to 
+	classify the images in the CIFAR-10 dataset.
+	
+	First of all, the original training set has been shuffled and divided into 
+	train and validation sets, with $49000$ and $1000$ images respectively.
+	
+	A certain preprocessing has been applied to the data, in particular, the 
+	pixel values, initially comprised between 0 and 255, have been rescaled 
+	between 0 and 1 and some binary assignment matrices have been created to 
+	represent the class assignments, which were integers between 0 and 9. 
+	
+	The architecture of the convolutional neural network follow the 
+	instructions provided, as well as the hyper-parameter values.
+	In the training phase, different batches were used, containing different 
+	examples for each epoch.
 	
 	\section{Once per epoch, document the classification accuracy on the 
 	validation set. The final accuracy should be close to 70\%.}
