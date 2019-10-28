@@ -4,6 +4,21 @@ import numpy as np
 import os
 from google.colab import drive
 
+
+def check_dir(out_dir, model_dir):
+
+    dir = out_dir + model_dir
+
+    set_dir = [dir + 'train.txt',
+               dir + 'validation.txt',
+               dir + 'test.txt']
+
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    return set_dir
+
+
 def data_preparation(n_train):
     # Load the CIFAR-10 dataset
     (x_train_valid, y_train_valid), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
@@ -115,8 +130,11 @@ def conv_net(X, dropout):
     return Z
 
 
-def main(set_dir, learning_rate, batch_size, epochs, is_dropout):
+def main(set_dir, learning_rate, batch_size, epochs, drop_values=None):
     # Network Parameters
+    if drop_values is None:
+        drop_values = [0, 0]
+
     summaries, X, Y, Z, dropout, n_train, loss, accuracy, train = net_param(1, learning_rate)
 
     f_train = open(set_dir[0], "w")
@@ -128,11 +146,6 @@ def main(set_dir, learning_rate, batch_size, epochs, is_dropout):
 
     session = tf.Session()
     session.run(tf.global_variables_initializer())
-
-    if is_dropout:
-        drop_values = [0.5, 0]
-    else:
-        drop_values = [0, 0]
 
     for epoch in range(0, epochs):
         print('Epoch: {}.'.format(epoch))
@@ -153,8 +166,8 @@ def main(set_dir, learning_rate, batch_size, epochs, is_dropout):
             if i % 50 == 0:
                 print('Iteration {}. Train Loss: {:.2f}. Train Accuracy: {:.2f}%.'
                       .format(i, train_loss, train_accuracy * 100))
-
-                f_train.write(str(epoch) + ', ' + str(i) + ', ' + str(train_loss) + ', ' + str(train_accuracy) + '\n')
+                f_train.write(str(epoch) + ', ' + str(i) + ', ' + str(train_loss) + ', ' + str(train_accuracy) +
+                              '\n')
 
         validation_loss = session.run(loss, feed_dict={X: x_valid, Y: y_valid, dropout: drop_values[1]})
         print('Validation loss: {}.'.format(validation_loss))
@@ -162,8 +175,7 @@ def main(set_dir, learning_rate, batch_size, epochs, is_dropout):
         # classification accuracy on the validation set
         validation_accuracy = session.run(accuracy, feed_dict={X: x_valid, Y: y_valid, dropout: drop_values[1]})
         print('Validation accuracy: {:.2f}%.'.format(validation_accuracy * 100))
-
-        f_valid.write(str(epoch) + ', ' + str(validation_loss) + ', ' + str(validation_accuracy * 100) + '\n')
+        f_valid.write(str(epoch) + ', ' + str(validation_loss) + ', ' + str(validation_accuracy) + '\n')
 
     f_train.close()
     f_valid.close()
@@ -184,65 +196,95 @@ x_train, x_valid, y_train, y_valid, y_test = data_preparation(n_train)
 ### Experiment 1 ###
 out_dir = 'USI/DeepLearning/Assignment2/out/'
 model_dir = '1/'
-
-dir = out_dir + model_dir
-
-set_dir = [dir + 'train.txt',
-           dir + 'validation.txt',
-           dir + 'test.txt']
-
-if not os.path.exists(dir):
-    os.makedirs(dir)
+set_dir = check_dir(out_dir, model_dir)
 
 # Training Parameters
 learning_rate = 1e-3
 batch_size = 32
 epochs = 50
-dropout = False
 
-main(set_dir, learning_rate, batch_size, epochs, dropout)
+# main(set_dir, learning_rate, batch_size, epochs)
 
 ### Experiment 2 ###
-
 model_dir = '2/'
-
-dir = out_dir + model_dir
-
-set_dir = [dir + 'train.txt',
-           dir + 'validation.txt',
-           dir + 'test.txt']
-
-if not os.path.exists(dir):
-    os.makedirs(dir)
+set_dir = check_dir(out_dir, model_dir)
 
 # Training Parameters
 learning_rate = 1e-3
 batch_size = 32
 epochs = 50
-dropout = True
+drop_values = [0.5, 0]
 
-main(set_dir, learning_rate, batch_size, epochs, dropout)
-
-# plt.plot(loss_values)
-# plt.show()
+# main(set_dir, learning_rate, batch_size, epochs, drop_values)
 
 ### Experiment 3 ###
-
 model_dir = '3/'
-
-dir = out_dir + model_dir
-
-set_dir = [dir + 'train.txt',
-           dir + 'validation.txt',
-           dir + 'test.txt']
-
-if not os.path.exists(dir):
-    os.makedirs(dir)
+set_dir = check_dir(out_dir, model_dir)
 
 # Training Parameters
-learning_rate = 1e-3
+learning_rate = 1e-4
 batch_size = 32
 epochs = 50
-is_dropout = True
+drop_values = [0.5, 0]
 
-main(set_dir, learning_rate, batch_size, epochs, is_dropout)
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 4 ###
+model_dir = '4/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-4
+batch_size = 64
+epochs = 50
+drop_values = [0.5, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 5 ###
+model_dir = '5/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-4
+batch_size = 64
+epochs = 50
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 6 ###
+model_dir = '6/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-4
+batch_size = 64
+epochs = 20
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 7 ###
+model_dir = '7/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-2
+batch_size = 64
+epochs = 20
+drop_values = [0.4, 0]
+
+main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 8 ###
+model_dir = '8/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-2
+batch_size = 32
+epochs = 50
+drop_values = [0.5, 0]
+
+main(set_dir, learning_rate, batch_size, epochs)
