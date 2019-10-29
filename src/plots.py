@@ -8,26 +8,27 @@ import numpy as np
 def plot_setting(out_dir, model_dir, epoch):
     dir = out_dir + model_dir
 
-    if not os.path.exists(dir + 'img/'):
-        os.makedirs(dir + 'img/')
-
     set_dir = [dir + 'train.txt',
                dir + 'validation.txt',
                dir + 'test.txt']
 
-    # my_plot(dir, set_dir, 'Loss', epoch)
-    my_plot(dir, set_dir, 'Accuracy', epoch)
+    img_dir = out_dir + 'img/'
+    if not os.path.exists(img_dir):
+        os.makedirs(img_dir)
+
+    img_dir = img_dir + model_dir.strip('/') + '-'
+
+    # my_plot(set_dir, img_dir, 'Loss', epoch)
+    my_plot(set_dir, img_dir, 'Accuracy', epoch)
 
 
-def my_plot(dir, set_dir, title, epoch):
+def my_plot(set_dir, img_dir, title, epoch):
 
     with open(set_dir[0], 'r') as f:
-        train_lines = f.readlines()
-        train_lines = train_lines[1:]
+        train_lines = f.readlines()[1:]
 
     with open(set_dir[1], 'r') as f:
-        valid_lines = f.readlines()
-        valid_lines = valid_lines[1:]
+        valid_lines = f.readlines()[1:]
 
     train_loss = np.array([])
     train_accuracy = np.array([])
@@ -45,37 +46,34 @@ def my_plot(dir, set_dir, title, epoch):
         valid_loss = np.append(valid_loss, float(el[1]))
         valid_accuracy = np.append(valid_accuracy, float(el[2]))
 
-    print(np.max(valid_accuracy))
+    print(set_dir[1], np.max(valid_accuracy))
 
-    x_train = np.arange(1, len(train_loss) * epoch, epoch, dtype=int)
-    x_valid = np.arange(1, len(train_loss) * epoch, len(train_loss), dtype=int)
-
-    approx_indices = np.arange(1, len(train_loss), epoch, dtype=int)
-    train_approx_x = x_train[approx_indices]
+    approx_indices = np.arange(1, len(train_loss), len(train_loss) / epoch, dtype=int)
+    x = np.arange(1, epoch + 1, dtype=int)
 
     plt.xlabel('epoch/iteration', fontsize=11)
 
     if title == 'Accuracy':
-        plt.plot(x_train, train_accuracy, label='Train ' + title)
-        train_approx_y = train_accuracy[approx_indices]
-        plt.plot(train_approx_x, train_approx_y, label='Smoothed Train ' + title)
-        plt.plot(x_valid, valid_accuracy, label='Valid ' + title)
+        train_accuracy = train_accuracy[approx_indices]
+        plt.plot(x, train_accuracy, label='Train ' + title)
+        plt.plot(x, valid_accuracy, label='Valid ' + title)
         plt.ylabel('accuracy', fontsize=11)
         plt.ylim(0, 1)
+
     elif title == 'Loss':
-        plt.plot(x_train, train_loss, label='Train ' + title)
-        train_approx_y = train_loss[approx_indices]
-        plt.plot(train_approx_x, train_approx_y, label='Smoothed Train ' + title)
-        plt.plot(x_valid, valid_loss, label='Valid ' + title)
+        train_loss = train_loss[approx_indices]
+        plt.plot(x, train_loss, label='Train ' + title)
+        plt.plot(x, valid_loss, label='Valid ' + title)
         plt.ylabel('loss', fontsize=11)
         plt.ylim(0, 7)
 
     plt.legend()
     plt.title(title + ' model ' + model_dir.strip('/'), weight='bold', fontsize=12)
-    plt.savefig(dir + 'img/' + title + '.png')
+    plt.savefig(img_dir + title + '.png')
     plt.show()
 
 
+########################################################################################################################
 out_dir = 'out/'
 
 ### Experiment 1 ###
@@ -154,10 +152,26 @@ plot_setting(out_dir, model_dir, 50)
 model_dir = '19/'
 plot_setting(out_dir, model_dir, 50)
 
-### Experiment 20 ###w
-model_dir = '20/'
-plot_setting(out_dir, model_dir, 50)
-
-### Experiment 21 ###w
-model_dir = '21/'
-plot_setting(out_dir, model_dir, 50)
+# ### Experiment 20 ###w
+# model_dir = '20/'
+# plot_setting(out_dir, model_dir, 50)
+#
+# ### Experiment 21 ###w
+# model_dir = '21/'
+# plot_setting(out_dir, model_dir, 50)
+#
+# ### Experiment 22 ###w
+# model_dir = '22/'
+# plot_setting(out_dir, model_dir, 50)
+#
+# ### Experiment 23 ###w
+# model_dir = '23/'
+# plot_setting(out_dir, model_dir, 50)
+#
+# ### Experiment 24 ###w
+# model_dir = '24/'
+# plot_setting(out_dir, model_dir, 50)
+#
+# ### Experiment 25 ###w
+# model_dir = '25/'
+# plot_setting(out_dir, model_dir, 50)
