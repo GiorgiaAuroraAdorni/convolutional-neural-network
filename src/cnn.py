@@ -269,3 +269,21 @@ main(check_dir(out_dir, '24/'), 1e-4, 128, 50, [0.7, 0])
 
 ### Experiment 25 ###
 main(check_dir(out_dir, '25/'), 1e-4, 128, 50, [0.6, 0])
+### Experiment 26 ###
+# main(check_dir(out_dir, '26/'), 1e-4, 128, 50, [0.5, 0])
+
+### Experiment 27 ###
+# main(check_dir(out_dir, '27/'), 1e-3, 128, 30, [0.6, 0])
+
+### Experiment 28 ###
+# main(check_dir(out_dir, '28/'), 0.005, 128, 50, [0.6, 0])
+
+
+### Experiment 30 ###
+main(check_dir(out_dir, '30/'), 1e-3, 128, 100, [0.6, 0])
+
+### Experiment 31 ###
+main(check_dir(out_dir, '31/'), 1e-4, 128, 100, [0.6, 0])
+
+### Experiment 31 ###
+main(check_dir(out_dir, '32/'), 1e-4, 128, 100, [0.5, 0])
