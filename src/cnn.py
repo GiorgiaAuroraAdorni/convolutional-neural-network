@@ -24,7 +24,8 @@ def data_preparation(n_train):
     # Split the original training set into a validation set (1000 images) and an effective training set (49000 images).
     # The data should be shuffled: each observation-class pair in the original training set should be assigned at random
     # to one of these sets.
-    indices = np.random.permutation(x_train_valid.shape[0])
+    random_state = np.random.RandomState(seed=1)
+    indices = random_state.permutation(x_train_valid.shape[0])
 
     train_indices = indices[:n_train]
     validation_indices = indices[n_train:]
