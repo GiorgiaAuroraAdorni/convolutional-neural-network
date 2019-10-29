@@ -46,7 +46,7 @@ def my_plot(set_dir, img_dir, title, epoch):
         valid_loss = np.append(valid_loss, float(el[1]))
         valid_accuracy = np.append(valid_accuracy, float(el[2]))
 
-    print(set_dir[1], np.max(valid_accuracy))
+    print(set_dir[1], valid_accuracy[-1])
 
     approx_indices = np.arange(1, len(train_loss), len(train_loss) / epoch, dtype=int)
     x = np.arange(1, epoch + 1, dtype=int)
@@ -175,3 +175,14 @@ plot_setting(out_dir, model_dir, 50)
 # ### Experiment 25 ###w
 # model_dir = '25/'
 # plot_setting(out_dir, model_dir, 50)
+### Experiment 26 ###w
+model_dir = '26/'
+plot_setting(out_dir, model_dir, 50)
+
+### Experiment 27 ###w
+model_dir = '27/'
+plot_setting(out_dir, model_dir, 30)
+
+### Experiment 28 ###w
+model_dir = '28/'
+plot_setting(out_dir, model_dir, 50)
