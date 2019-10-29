@@ -273,7 +273,7 @@ batch_size = 64
 epochs = 20
 drop_values = [0.4, 0]
 
-main(set_dir, learning_rate, batch_size, epochs)
+# main(set_dir, learning_rate, batch_size, epochs)
 
 ### Experiment 8 ###
 model_dir = '8/'
@@ -284,5 +284,161 @@ learning_rate = 1e-2
 batch_size = 32
 epochs = 50
 drop_values = [0.5, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 9 ###
+model_dir = '9/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 64
+epochs = 50
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 10 ###
+model_dir = '10/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 32
+epochs = 50
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 11 ###
+model_dir = '11/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 32
+epochs = 20
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 12 ###
+model_dir = '12/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 32
+epochs = 20
+drop_values = [0.3, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 13 ###
+model_dir = '13/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 64
+epochs = 20
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 14 ###
+model_dir = '14/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 64
+epochs = 20
+drop_values = [0.3, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 15 ###
+model_dir = '15/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-4
+batch_size = 32
+epochs = 50
+drop_values = [0.4, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 16 ###
+model_dir = '16/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-5
+batch_size = 32
+epochs = 50
+drop_values = [0.5, 0]
+
+# main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 17 ###
+model_dir = '17/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 128
+epochs = 50
+drop_values = [0.5, 0]
+
+main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 18 ###
+model_dir = '18/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 128
+epochs = 50
+drop_values = [0.6, 0]
+
+main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 19 ###
+model_dir = '19/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 128
+epochs = 50
+drop_values = [0.7, 0]
+
+main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 20 ###
+model_dir = '20/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 64
+epochs = 50
+drop_values = [0.7, 0]
+
+main(set_dir, learning_rate, batch_size, epochs)
+
+### Experiment 21 ###
+model_dir = '21/'
+set_dir = check_dir(out_dir, model_dir)
+
+# Training Parameters
+learning_rate = 1e-3
+batch_size = 64
+epochs = 50
+drop_values = [0.6, 0]
 
 main(set_dir, learning_rate, batch_size, epochs)
