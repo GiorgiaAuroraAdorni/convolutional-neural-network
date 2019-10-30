@@ -26,7 +26,7 @@ def check_dir(out_dir, model_dir):
     return set_dir
 
 
-def plot_setting(valid_accuracies, out_dir, model_dir, epoch):
+def plot_setting(valid_accuracies, out_dir, model_dir, epoch, final=False):
     """
 
     :param valid_accuracies:
@@ -46,11 +46,11 @@ def plot_setting(valid_accuracies, out_dir, model_dir, epoch):
 
     img_dir = img_dir + model_dir.strip('/') + '-'
 
-    my_plot(valid_accuracies, model_dir, set_dir, img_dir, 'Loss', epoch)
-    my_plot(valid_accuracies, model_dir, set_dir, img_dir, 'Accuracy', epoch)
+    my_plot(valid_accuracies, model_dir, set_dir, img_dir, 'Loss', epoch, final)
+    my_plot(valid_accuracies, model_dir, set_dir, img_dir, 'Accuracy', epoch, final)
 
 
-def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch):
+def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch, final):
     """
 
     :param valid_accuracies:
@@ -82,24 +82,43 @@ def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch):
         valid_loss = np.append(valid_loss, float(el[1]))
         valid_accuracy = np.append(valid_accuracy, float(el[2]))
 
-    approx_indices = np.arange(1, len(train_loss), len(train_loss) / epoch, dtype=int)
     x = np.arange(1, epoch + 1, dtype=int)
+
+    if final:
+        with open(set_dir[2], 'r') as f:
+            test_lines = f.readlines()[1:]
+
+        test_loss = np.array([])
+        test_accuracy = np.array([])
+
+        for line in test_lines:
+            el = line.strip('\n').split(',')
+            test_loss = np.append(test_loss, float(el[1]))
+            test_accuracy = np.append(test_accuracy, float(el[2]))
 
     plt.xlabel('epoch/iteration', fontsize=11)
 
     if title == 'Accuracy':
         valid_accuracies[set_dir[1]] = valid_accuracy[-1]
         print(set_dir[1], valid_accuracy[-1])
+
         plt.plot(x, train_accuracy, label='Train ' + title)
         plt.plot(x, valid_accuracy, label='Valid ' + title)
+        if final:
+            plt.plot(x, test_accuracy, label='Test ' + title)
+            print(set_dir[2], ' accuracy: ', test_accuracy[-1])
         plt.ylabel('accuracy', fontsize=11)
         plt.ylim(0, 1)
 
     elif title == 'Loss':
         plt.plot(x, train_loss, label='Train ' + title)
         plt.plot(x, valid_loss, label='Valid ' + title)
+        if final:
+            plt.plot(x, test_loss, label='Test ' + title)
+            print(set_dir[2], ' loss: ', test_loss[-1])
+
         plt.ylabel('loss', fontsize=11)
-        plt.ylim(0, 7)
+        # plt.ylim(0, 7)
 
     plt.legend()
     plt.title(title + ' model ' + model_dir.strip('/'), weight='bold', fontsize=12)
@@ -284,7 +303,7 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
             train_accuracy, _ = session.run([accuracy, train],
                                             feed_dict={X: batch[0], Y: batch[1], dropout: drop_values[0]})
 
-            avg_loss += train_loss * y_train[batch_indices].size
+            avg_loss += train_loss * y_train[batch_indices].shape[0]
 
         train_loss = avg_loss / n_train
 
@@ -315,9 +334,9 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
 
 ########################################################################################################################
 
-# drive.mount('/content/gdrive')
-# baseURL = '/content/gdrive/My Drive'
-# os.chdir(baseURL)
+drive.mount('/content/gdrive')
+baseURL = '/content/gdrive/My Drive'
+os.chdir(baseURL)
 
 n_train = 49000
 x_train, x_valid, y_train, y_valid, x_test, y_test = data_preparation(n_train)
@@ -328,15 +347,15 @@ valid_accuracies = OrderedDict()
 
 ### Experiment 1 ###
 main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
-plot_setting(valid_accuracies, plot_dir, '1/', 50)
+# plot_setting(valid_accuracies, plot_dir, '1/', 50)
 
 ### Experiment 2 ###
 main(check_dir(out_dir, '2/'), 1e-3, 32, 50, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '2/', 50)
+# plot_setting(valid_accuracies, plot_dir, '2/', 50)
 
 ### Experiment 3 ###
 main(check_dir(out_dir, '3/'), 1e-4, 32, 50, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '3/', 50)
+# plot_setting(valid_accuracies, plot_dir, '3/', 50)
 
 ### Experiment 4 ###
 # main(check_dir(out_dir, '4/'), 1e-4, 64, 50, [0.5, 0])
@@ -391,11 +410,11 @@ plot_setting(valid_accuracies, plot_dir, '3/', 50)
 
 ### Experiment 17 ###
 main(check_dir(out_dir, '17/'), 1e-3, 128, 50, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '17/', 50)
+# plot_setting(valid_accuracies, plot_dir, '17/', 50)
 
 ### Experiment 18 ###
 main(check_dir(out_dir, '18/'), 1e-3, 128, 50, [0.6, 0])
-plot_setting(valid_accuracies, plot_dir, '18/', 50)
+# plot_setting(valid_accuracies, plot_dir, '18/', 50)
 
 ### Experiment 19 ###
 # main(check_dir(out_dir, '19/'), 1e-3, 128, 50, [0.7, 0])
@@ -447,7 +466,7 @@ plot_setting(valid_accuracies, plot_dir, '18/', 50)
 
 ### Experiment 32 ###
 main(check_dir(out_dir, '32/'), 1e-4, 128, 100, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '32/', 100)
+# plot_setting(valid_accuracies, plot_dir, '32/', 100)
 
 ### Experiment 33 ###
 # main(check_dir(out_dir, '33/'), 1e-4, 128, 200, [0.6, 0])
@@ -459,11 +478,11 @@ plot_setting(valid_accuracies, plot_dir, '32/', 100)
 
 ### Experiment 35 ###
 main(check_dir(out_dir, '35/'), 1e-4, 256, 200, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '35/', 200)
+# plot_setting(valid_accuracies, plot_dir, '35/', 200)
 
 ### Experiment 36 ###
 main(check_dir(out_dir, '36/'), 1e-4, 128, 200, [0.5, 0], True)
-plot_setting(valid_accuracies, plot_dir, '36/', 200)
+# plot_setting(valid_accuracies, plot_dir, '36/', 200, True)
 
 valid_accuracies = sorted(valid_accuracies.items(), key=lambda t: t[1], reverse=True)
 print(valid_accuracies[:10])
