@@ -172,7 +172,7 @@ def net_param(model, learning_rate):
 
     :param model: current model
     :param learning_rate: learning rate of the model
-    :return summaries, X, Y, Z, dropout, n_train, loss, accuracy, train
+    :return X, Y, Z, dropout, n_train, loss, accuracy, train
     """
     with tf.variable_scope("model_{}".format(model)):
         dropout = tf.placeholder(tf.float32, [], name='dropout')
@@ -185,21 +185,14 @@ def net_param(model, learning_rate):
         loss = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=Z)
         loss = tf.reduce_mean(loss)
 
-        s_loss = tf.summary.scalar('loss', loss)
-
         hits = tf.equal(tf.argmax(Z, axis=1), tf.argmax(Y, axis=1))
         accuracy = tf.reduce_mean(tf.cast(hits, tf.float32))
-
-        s_accuracy = tf.summary.scalar('accuracy', accuracy)
-
-        # Merges all summaries into single a operation
-        summaries = tf.summary.merge([s_loss])
 
         # Optimiser
         optimizer = tf.train.AdamOptimizer(learning_rate)
         train = optimizer.minimize(loss)
 
-    return summaries, X, Y, Z, dropout, n_train, loss, accuracy, train
+    return X, Y, Z, dropout, n_train, loss, accuracy, train
 
 
 def conv_net(X, dropout):
@@ -272,7 +265,7 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
     if drop_values is None:
         drop_values = [0, 0]
 
-    summaries, X, Y, Z, dropout, n_train, loss, accuracy, train = net_param(1, learning_rate)
+    X, Y, Z, dropout, n_train, loss, accuracy, train = net_param(1, learning_rate)
 
     f_train = open(set_dir[0], "w")
     f_valid = open(set_dir[1], "w")
