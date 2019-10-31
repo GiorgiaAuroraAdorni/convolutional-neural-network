@@ -5,7 +5,6 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from google.colab import drive
 
 
 def check_dir(out_dir, model_dir):
@@ -108,7 +107,7 @@ def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch, final):
             plt.plot(x, test_accuracy, label='Test ' + title)
             print(set_dir[2], ' accuracy: ', test_accuracy[-1])
         plt.ylabel('accuracy', fontsize=11)
-        plt.ylim(0, 1)
+        plt.ylim(0, 1.01)
 
     elif title == 'Loss':
         plt.plot(x, train_loss, label='Train ' + title)
@@ -283,6 +282,8 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
     session = tf.Session()
     session.run(tf.global_variables_initializer())
 
+    print('Model: {}.'.format(set_dir))
+
     for epoch in range(0, epochs):
         print('Epoch: {}.'.format(epoch))
         permutation = np.random.permutation(n_train)
@@ -291,41 +292,40 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
         # Each epoch should split the training dataset into batches differently.
         # This is easily accomplished by creating a new list of (randomly generated) batches for each epoch.
         avg_loss = 0
-        train_accuracy = 0
+        avg_accuracy = 0
 
         for i, sample_index in enumerate(range(0, n_train, batch_size)):
             batch_indices = permutation[sample_index:sample_index + batch_size]
             batch = [x_train[batch_indices], y_train[batch_indices]]
 
             # Train
-            train_loss, _ = session.run([loss, train],
-                                        feed_dict={X: batch[0], Y: batch[1], dropout: drop_values[0]})
-            train_accuracy, _ = session.run([accuracy, train],
-                                            feed_dict={X: batch[0], Y: batch[1], dropout: drop_values[0]})
+            train_loss, train_accuracy, _ = session.run([loss, accuracy, train],
+                                                        feed_dict={X: batch[0], Y: batch[1], dropout: drop_values[0]})
 
+            avg_accuracy += train_accuracy * y_train[batch_indices].shape[0]
             avg_loss += train_loss * y_train[batch_indices].shape[0]
 
         train_loss = avg_loss / n_train
+        train_accuracy = avg_accuracy / n_train
 
         print('Train Loss: {:.2f}. Train Accuracy: {:.2f}%.'.format(train_loss, train_accuracy * 100))
         f_train.write(str(epoch) + ', ' + str(train_loss) + ', ' + str(train_accuracy) + '\n')
 
         # Validation
-        validation_loss = session.run(loss, feed_dict={X: x_valid, Y: y_valid, dropout: drop_values[1]})
+        validation_loss, validation_accuracy = session.run([loss, accuracy],
+                                                           feed_dict={X: x_valid, Y: y_valid, dropout: drop_values[1]})
         print('Validation loss: {}.'.format(validation_loss))
 
-        validation_accuracy = session.run(accuracy, feed_dict={X: x_valid, Y: y_valid, dropout: drop_values[1]})
         print('Validation accuracy: {:.2f}%.'.format(validation_accuracy * 100))
         f_valid.write(str(epoch) + ', ' + str(validation_loss) + ', ' + str(validation_accuracy) + '\n')
 
         # Test
         if final:
-            test_loss = session.run(loss, feed_dict={X: x_test, Y: y_test, dropout: drop_values[1]})
+            test_loss, test_accuracy = session.run([loss, accuracy],
+                                                   feed_dict={X: x_test, Y: y_test, dropout: drop_values[1]})
             print('Test loss: {}.'.format(test_loss))
-
-            test_accuracy = session.run(accuracy, feed_dict={X: x_test, Y: y_test, dropout: drop_values[1]})
             print('Test accuracy: {:.2f}%.'.format(test_accuracy * 100))
-            f_test.write(str(epoch) + ', ' + str(test_accuracy) + ', ' + str(test_accuracy) + '\n')
+            f_test.write(str(epoch) + ', ' + str(test_loss) + ', ' + str(test_accuracy) + '\n')
 
     f_train.close()
     f_valid.close()
@@ -333,10 +333,6 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
 
 
 ########################################################################################################################
-
-drive.mount('/content/gdrive')
-baseURL = '/content/gdrive/My Drive'
-os.chdir(baseURL)
 
 n_train = 49000
 x_train, x_valid, y_train, y_valid, x_test, y_test = data_preparation(n_train)
