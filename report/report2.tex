@@ -72,25 +72,138 @@
 	classify the images in the CIFAR-10 dataset.
 	
 	First of all, the original training set has been shuffled and divided into 
-	train and validation sets, with $49000$ and $1000$ images respectively.
+	train and validation sets, with $49000$ and $1000$ images respectively. A 
+	seed has been used to reproduce the same sample split and use them in the 
+	different models. Instead, the test set provided contains $10000$ images.
 	
-	A certain preprocessing has been applied to the data, in particular, the 
-	pixel values, initially comprised between 0 and 255, have been rescaled 
-	between 0 and 1 and some binary assignment matrices have been created to 
-	represent the class assignments, which were integers between 0 and 9. 
+	A certain preprocessing has been applied to the data. The pixel values of 
+	each sample, initially comprised between 0 and 255, have been rescaled 
+	between 0 and 1. To represent the class assignments, which were integers 
+	between 0 and 9, three binary assignment matrices have been created, one 
+	for each set of data. 
 	
 	The architecture of the convolutional neural network follow the 
-	instructions provided, as well as the hyper-parameter values.
-	In the training phase, different batches were used, containing different 
-	examples for each epoch.
+	instructions provided, as well as the hyper-parameter values for the models 
+	presented in the Sections \ref{section:model0} and \ref{section:dropout}.
+	In the training phase, mini-batches were used. In particular, each 
+	epoch splits the training set in different samples of data.
 	
-	\section{Once per epoch, document the classification accuracy on the 
-	validation set. The final accuracy should be close to 70\%.}
+	All the models were implemented using \texttt{TensorFlow} and trained on a 
+	NVIDIA Tesla V100-PCIE-16GB GPU.
 	
-	\section{document the evolution of the validation accuracy with dropout}
+	\section{Performance of the initial model}
+	\label{section:model0}
+	In Table \ref{tab:model0} is summarised the architecture of the network 
+	used in the first experiment.	
+	
+	\begin{figure}[H]
+		\centering
+		
+		\begin{tabular}{cccccccc}
+		\toprule
+		\textbf{conv1} & \textbf{conv2} & \textbf{mpool1} & \textbf{conv3} &
+		\textbf{conv4} & \textbf{mpool1} &   \textbf{fc} &
+		\textbf{softmax} \\
+		\midrule
+		3$\times$3,  32 & 3$\times$3, 32 & 2$\times$2 &3$\times$3, 64 & 
+		3$\times$3, 64  & 2$\times$2  & 512 & 10\\
+		s. 2$\times$2 &   s. 2$\times$2 &   s. 1$\times$1 & s. 1$\times$1  & s. 
+		2$\times$2 & s. 2$\times$2 && \\
+		p. same & p. same & p. same  & p. same & p. same & p. same &&\\
+		\bottomrule
+		\end{tabular}
+		\captionof{table}{Network architecture}
+		\label{tab:model0}
+	\end{figure}
+	
+	The model is trained for $50$ epochs and \texttt{Adam} is used as 
+	optimiser with learning rate $0,001$.
+	As loss function, the Softmax Cross Entropy with Logits is used since the 
+	model is a multi-class classifier. Moreover, once per epoch, is documented 
+	the classification accuracy on both the train and validation set.
+	The performance are shown in Figure \ref{fig:model0-performance}.
+	
+	\begin{figure}[H]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{../src/out/img/1-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{../src/out/img/1-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the initial model}
+		\label{fig:model0-performance}
+	\end{figure}
+	
+	As can be seen in Figure (a), the train accuracy rapidly grows up to 
+	$1.00$, while the validation accuracy remains stable at $0.70$.  
+	The final accuracy on the valid set is $72\%$.
+	For what concerns the loss, it is clear that the model overfits the data. 
+	In fact, the train loss is next/close to while the validation one diverges.
+	
+	For this reason, in Section \ref{section:dropout} is presented a new model 
+	that has the aim of improving this results.
+	
+	\section{Regularisation of the model with dropout}
+	\label{section:dropout}
+	The model proposed in this section involve the use of a model 
+	regularisation technique, that is the addition of a dropout layer after 
+	each max-pooling and fully-connected layer. In particular, during the 
+	training phase, the probability to keep each neuron is setted to $0.5$, 
+	while in the validation set should be $1$.	
+	
+	The architecture of the new network is presented in Table \ref{tab:model1}.	
+	
+	\begin{figure}[H]
+		\centering
+		
+		\begin{tabular}{cccccccc}
+			\toprule
+			\textbf{conv1} & \textbf{conv2} & \textbf{mpool1} & 
+			\textbf{conv3} &
+			\textbf{conv4} & \textbf{mpool2} &   \textbf{fc} &
+			\textbf{softmax} \\
+			\midrule
+			3$\times$3,  32 & 3$\times$3, 32 & 2$\times$2 &3$\times$3, 64 & 
+			3$\times$3, 64  & 2$\times$2  & 512 & 10\\
+			s. 2$\times$2 &   s. 2$\times$2 &   s. 1$\times$1 & s. 1$\times$1  
+			& s. 
+			2$\times$2 & s. 2$\times$2 && \\
+			p. same & p. same & p. same  & p. same & p. same & p. same &&\\
+			 &  & dropout  &  &  & dropout & dropout & dropout\\
+			\bottomrule
+		\end{tabular}
+		\captionof{table}{Network architecture}
+		\label{tab:model1}
+	\end{figure}
+	The performance are shown in Figure \ref{fig:model1-performance}.
+	
+	\begin{figure}[H]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{../src/out/img/2-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{../src/out/img/2-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the regularised model}
+		\label{fig:model1-performance}
+	\end{figure}
+	  
+	
 	
 	\section{hyperparameter settings}
+	\label{section:hyperparam}
 
 	\section{compute the test set accuracy and document the result.} 
+	\label{section:finalmodel}
 
 \end{document}
