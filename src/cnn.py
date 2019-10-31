@@ -97,7 +97,7 @@ def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch, final):
             test_loss = np.append(test_loss, float(el[1]))
             test_accuracy = np.append(test_accuracy, float(el[2]))
 
-    plt.xlabel('epoch/iteration', fontsize=11)
+    plt.xlabel('epoch', fontsize=11)
 
     if title == 'Accuracy':
         valid_accuracies[set_dir[1]] = valid_accuracy[-1]
@@ -119,7 +119,7 @@ def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch, final):
             print(set_dir[2], ' loss: ', test_loss[-1])
 
         plt.ylabel('loss', fontsize=11)
-        # plt.ylim(0, 7)
+        plt.ylim(0, 4.5)
 
     plt.legend()
     plt.title(title + ' model ' + model_dir.strip('/'), weight='bold', fontsize=12)
