@@ -10,8 +10,8 @@ import tensorflow as tf
 def check_dir(out_dir, model_dir):
     """
 
-    :param out_dir:
-    :param model_dir:
+    :param out_dir: project directory for the output files
+    :param model_dir: model directory
     :return:
     """
     dir = out_dir + model_dir
@@ -28,10 +28,11 @@ def check_dir(out_dir, model_dir):
 def plot_setting(valid_accuracies, out_dir, model_dir, epoch, final=False):
     """
 
-    :param valid_accuracies:
-    :param out_dir:
-    :param model_dir:
-    :param epoch:
+    :param valid_accuracies: OrderedDict containing the model and the corrispondent validation accuracy
+    :param out_dir: project directory for the output files
+    :param model_dir: model directory
+    :param epoch: number of epochs of the model
+    :param final: boolean parameter that is True if only if the model is the one selected for the final test
     """
     dir = out_dir + model_dir
 
@@ -52,12 +53,13 @@ def plot_setting(valid_accuracies, out_dir, model_dir, epoch, final=False):
 def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch, final):
     """
 
-    :param valid_accuracies:
-    :param model_dir:
-    :param set_dir:
-    :param img_dir:
-    :param title:
-    :param epoch:
+    :param valid_accuracies: OrderedDict containing the model and the corrispondent validation accuracy
+    :param model_dir: model directory
+    :param set_dir: a list containing the path for the 3 output files containing the performances
+    :param img_dir: directory for the output images
+    :param title: title of the plot
+    :param epoch: number of epochs of the model
+    :param final: boolean parameter that is True if only if the model is the one selected for the final test
     """
     with open(set_dir[0], 'r') as f:
         train_lines = f.readlines()[1:]
@@ -128,8 +130,9 @@ def my_plot(valid_accuracies, model_dir, set_dir, img_dir, title, epoch, final):
 def data_preparation(n_train):
     """
 
-    :param n_train:
-    :return:
+    :param n_train: number of effective sample in the training set
+    :return scaled_x_train, scaled_x_valid, y_train_matrix, y_valid_matrix, scaled_x_test, y_test_matrix: the inputs
+    and labels for the three datasets
     """
     # Load the CIFAR-10 dataset
     (x_train_valid, y_train_valid), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
