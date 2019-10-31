@@ -170,14 +170,12 @@ def data_preparation(n_train):
 def net_param(model, learning_rate):
     """
 
-    :param model:
-    :param learning_rate:
-    :return:
+    :param model: current model
+    :param learning_rate: learning rate of the model
+    :return summaries, X, Y, Z, dropout, n_train, loss, accuracy, train
     """
     with tf.variable_scope("model_{}".format(model)):
-        dropout = tf.placeholder(tf.float32, [], name='dropout')  # Placeholder that represent the probability to keep
-
-        # each neuron
+        dropout = tf.placeholder(tf.float32, [], name='dropout')
         X = tf.placeholder(tf.float32, [None, 32, 32, 3], name='X')
         Y = tf.placeholder(tf.float32, [None, 10], name='Y')
 
@@ -207,9 +205,9 @@ def net_param(model, learning_rate):
 def conv_net(X, dropout):
     """
 
-    :param X:
-    :param dropout:
-    :return:
+    :param X: input
+    :param dropout: placeholder that represent the probability to keep each neuron
+    :return Z: output
     """
     # (a) Convolutional layer 1: 32 filters, 3 × 3.
     W_conv1 = tf.Variable(tf.truncated_normal([3, 3, 3, 32], stddev=0.1))
@@ -261,12 +259,14 @@ def conv_net(X, dropout):
 def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=False):
     """
 
-    :param set_dir:
-    :param learning_rate:
-    :param batch_size:
-    :param epochs:
-    :param drop_values:
-    :param final:
+    :param set_dir: a list containing the path for the 3 output files containing the performances
+    :param learning_rate: learning rate of the model
+    :param batch_size: samples contained in each batch
+    :param epochs: number of epochs for the model
+    :param drop_values: a list in which the first element represent the probability to keep each neuron during the
+    training and the second during the validation/test. The default value is 0 for both, that corresponds to keep the
+    neuron with probability 1.
+    :param final: boolean parameter that is True if only if the model is the one selected for the final test
     """
     # Network Parameters
     if drop_values is None:
