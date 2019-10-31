@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 from collections import OrderedDict
-
+import time
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -278,9 +278,9 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
     f_valid = open(set_dir[1], "w")
     f_test = open(set_dir[2], "w")
 
-    f_train.write('epoch, loss, accuracy\n')
-    f_valid.write('epoch, loss, accuracy\n')
-    f_test.write('epoch, loss, accuracy\n')
+    f_train.write('epoch, loss, accuracy, time\n')
+    f_valid.write('epoch, loss, accuracy, time\n')
+    f_test.write('epoch, loss, accuracy, time\n')
 
     session = tf.Session()
     session.run(tf.global_variables_initializer())
@@ -297,11 +297,14 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
         avg_loss = 0
         avg_accuracy = 0
 
+        print("Starting train…")
+        train_start = time.time()
         for i, sample_index in enumerate(range(0, n_train, batch_size)):
             batch_indices = permutation[sample_index:sample_index + batch_size]
             batch = [x_train[batch_indices], y_train[batch_indices]]
 
             # Train
+
             train_loss, train_accuracy, _ = session.run([loss, accuracy, train],
                                                         feed_dict={X: batch[0], Y: batch[1], dropout: drop_values[0]})
 
@@ -310,25 +313,37 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
 
         train_loss = avg_loss / n_train
         train_accuracy = avg_accuracy / n_train
+        train_end = time.time()
+        train_time = train_end - train_start
 
-        print('Train Loss: {:.2f}. Train Accuracy: {:.2f}%.'.format(train_loss, train_accuracy * 100))
-        f_train.write(str(epoch) + ', ' + str(train_loss) + ', ' + str(train_accuracy) + '\n')
+        print('Train Loss: {:.2f}. Train Accuracy: {:.2f}%. Train Time: {} sec.'
+              .format(train_loss, train_accuracy * 100, train_time))
+        f_train.write(str(epoch) + ', ' + str(train_loss) + ', ' + str(train_accuracy) + ',' + str(train_time) + '\n')
 
         # Validation
+        print("Starting validation…")
+        valid_start = time.time()
         validation_loss, validation_accuracy = session.run([loss, accuracy],
                                                            feed_dict={X: x_valid, Y: y_valid, dropout: drop_values[1]})
-        print('Validation loss: {}.'.format(validation_loss))
+        valid_end = time.time()
+        valid_time = valid_end - valid_start
 
-        print('Validation accuracy: {:.2f}%.'.format(validation_accuracy * 100))
-        f_valid.write(str(epoch) + ', ' + str(validation_loss) + ', ' + str(validation_accuracy) + '\n')
+        print('Validation loss: {}. Validation accuracy: {:.2f}%. Validation Time: {} sec.'
+              .format(validation_loss, validation_accuracy * 100, valid_time))
+        f_valid.write(str(epoch) + ', ' + str(validation_loss) + ', ' + str(validation_accuracy) + ',' + str(valid_time) + '\n')
 
         # Test
         if final:
+            print("Starting test…")
+            test_start = time.time()
             test_loss, test_accuracy = session.run([loss, accuracy],
                                                    feed_dict={X: x_test, Y: y_test, dropout: drop_values[1]})
-            print('Test loss: {}.'.format(test_loss))
-            print('Test accuracy: {:.2f}%.'.format(test_accuracy * 100))
-            f_test.write(str(epoch) + ', ' + str(test_loss) + ', ' + str(test_accuracy) + '\n')
+            test_end = time.time()
+            test_time = test_end - test_start
+
+            print('Test loss: {}. Test accuracy: {:.2f}%. Test Time: {} sec.'
+                  .format(test_loss, test_accuracy * 100, test_time))
+            f_test.write(str(epoch) + ', ' + str(test_loss) + ', ' + str(test_accuracy) + ',' + str(test_time) + '\n')
 
     f_train.close()
     f_valid.close()
