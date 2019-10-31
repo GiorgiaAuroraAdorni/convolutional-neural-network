@@ -360,16 +360,16 @@ plot_dir = 'out/'
 valid_accuracies = OrderedDict()
 
 ### Experiment 1 ###
-main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
-# plot_setting(valid_accuracies, plot_dir, '1/', 50)
+# main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
+plot_setting(valid_accuracies, plot_dir, '1/', 50)
 
 ### Experiment 2 ###
-main(check_dir(out_dir, '2/'), 1e-3, 32, 50, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '2/', 50)
+# main(check_dir(out_dir, '2/'), 1e-3, 32, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '2/', 50)
 
 ### Experiment 3 ###
-main(check_dir(out_dir, '3/'), 1e-4, 32, 50, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '3/', 50)
+# main(check_dir(out_dir, '3/'), 1e-4, 32, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '3/', 50)
 
 ### Experiment 4 ###
 # main(check_dir(out_dir, '4/'), 1e-4, 64, 50, [0.5, 0])
@@ -423,12 +423,12 @@ main(check_dir(out_dir, '3/'), 1e-4, 32, 50, [0.5, 0])
 # plot_setting(valid_accuracies, plot_dir, '16/', 50)
 
 ### Experiment 17 ###
-main(check_dir(out_dir, '17/'), 1e-3, 128, 50, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '17/', 50)
+# main(check_dir(out_dir, '17/'), 1e-3, 128, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '17/', 50)
 
 ### Experiment 18 ###
-main(check_dir(out_dir, '18/'), 1e-3, 128, 50, [0.6, 0])
-# plot_setting(valid_accuracies, plot_dir, '18/', 50)
+# main(check_dir(out_dir, '18/'), 1e-3, 128, 50, [0.6, 0])
+plot_setting(valid_accuracies, plot_dir, '18/', 50)
 
 ### Experiment 19 ###
 # main(check_dir(out_dir, '19/'), 1e-3, 128, 50, [0.7, 0])
@@ -479,8 +479,8 @@ main(check_dir(out_dir, '18/'), 1e-3, 128, 50, [0.6, 0])
 # plot_setting(valid_accuracies, plot_dir, '31/', 100)
 
 ### Experiment 32 ###
-main(check_dir(out_dir, '32/'), 1e-4, 128, 100, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '32/', 100)
+# main(check_dir(out_dir, '32/'), 1e-4, 128, 100, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '32/', 100)
 
 ### Experiment 33 ###
 # main(check_dir(out_dir, '33/'), 1e-4, 128, 200, [0.6, 0])
@@ -491,12 +491,16 @@ main(check_dir(out_dir, '32/'), 1e-4, 128, 100, [0.5, 0])
 # plot_setting(valid_accuracies, plot_dir, '34/', 200)
 
 ### Experiment 35 ###
-main(check_dir(out_dir, '35/'), 1e-4, 256, 200, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '35/', 200)
+# main(check_dir(out_dir, '35/'), 1e-4, 256, 200, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '35/', 200)
 
 ### Experiment 36 ###
-main(check_dir(out_dir, '36/'), 1e-4, 128, 200, [0.5, 0], True)
-# plot_setting(valid_accuracies, plot_dir, '36/', 200, True)
+# main(check_dir(out_dir, '36/'), 1e-4, 128, 200, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '36/', 200)
+
+### Experiment 37 ###
+# main(check_dir(out_dir, '37/'), 1e-4, 128, 300, [0.5, 0], True)
+plot_setting(valid_accuracies, plot_dir, '37/', 300, True)
 
 valid_accuracies = sorted(valid_accuracies.items(), key=lambda t: t[1], reverse=True)
 print(valid_accuracies[:10])
