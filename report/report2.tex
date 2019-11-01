@@ -219,14 +219,14 @@
 	accuracy. In particular, will be documented the performances according to 
 	the modification of the following hyperparameters: learning rate, 
 	mini-batch size, dropout and number of epochs.
-	Other hyperparameters, such as the loss function, the optimiser and the 
-	number of hidden units are never changed. %FIXME
 	
 	In Table \ref{tab:param} are presented the different hyperparameter 
-	settings of the models with the best performance. The other configurations  
-	tested will not be presented in this report due to their 
-	%fixmes
-	barely/insufficient results.  
+	settings of the models with the best performances. The other configurations 
+	tested, also those that include the modification of other hyperparameters, 
+	for example using the Gradient Descent as optimiser, will not be presented 
+	in this report due to their barely/insufficient results. Other 
+	hyperparameters, such as the loss function and the number of hidden units, 
+	are never changed. 
 	
 	\begin{table}[H]
 		\centering
@@ -259,9 +259,6 @@
 	accuracy now is $75.5\%$.
 	The same can be said for the loss curve which rapidly decreases towards $0$.
 	
-	A further modification to this model could consist in increasing the 
-	number of epochs since the curves have not yet stabilised.
-	
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
@@ -277,11 +274,32 @@
 		\caption{Training and validation loss on model 3}
 		\label{fig:model3-performance}
 	\end{figure}
+
+	A further modification to this model consist of the increasing the number 
+	of epochs, since the curves have not yet stabilised. The resulting 
+	performances are shown in Figure \ref{fig:model3b-performance}. The model 
+	has improved the accuracy of $9.9\%$, reaching  $85.4\%$.
 	
-	%FIXME new model with more epochs
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/3b-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/3b-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on model 3b}
+		\label{fig:model3b-performance}
+	\end{figure}
+	
 presented has  the  
 is carried out 
-\\
+this means 
+
 	
 	In Model 4, the training phase has been carried out using $128$ sample for 
 	batch instead of $32$ and the learning rate has been restored to its 
