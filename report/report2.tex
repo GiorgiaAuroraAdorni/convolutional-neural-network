@@ -126,13 +126,13 @@
 	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=1\linewidth]{../src/out/img/1-Accuracy.png}
+			\includegraphics[width=\linewidth]{../src/out/img/1-Accuracy.png}
 			\caption*{(a)}
 		\end{minipage}
 		~
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=1\linewidth]{../src/out/img/1-Loss.png}
+			\includegraphics[width=\linewidth]{../src/out/img/1-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
 		\caption{Training and validation loss on the initial model}
@@ -180,18 +180,31 @@
 		\captionof{table}{Network architecture}
 		\label{tab:model1}
 	\end{figure}
-	The performance are shown in Figure \ref{fig:model1-performance}.
+	The actual performance are shown in Figure \ref{fig:model1-performance}.
+		
+	As can be seen in Figures, the validation performance are legitimately 
+	better than the training one, since the regularisation is applied only to 
+	the train set and not to the validation.
 	
-	\begin{figure}[H]
+	In this experiment, the validation accuracy is $73,3\%$, a little better 
+	respect the previous model.
+	Instead, observing the loss curves, with this model there are no signs of 
+	overfitting but rather of underfitting. In fact, the training loss is  
+	greater than $1.5$ and the validation one is around $1$. Therefore, both 
+	have high values. For this reason, in the following section, some 
+	experiments will be attempted by modifying the values of the model's 
+	hyperparameters.
+	
+	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=1\linewidth]{../src/out/img/2-Accuracy.png}
+			\includegraphics[width=\linewidth]{../src/out/img/2-Accuracy.png}
 			\caption*{(a)}
 		\end{minipage}
 		~
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=1\linewidth]{../src/out/img/2-Loss.png}
+			\includegraphics[width=\linewidth]{../src/out/img/2-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
 		\caption{Training and validation loss on the regularised model}
