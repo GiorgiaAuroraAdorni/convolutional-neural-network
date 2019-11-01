@@ -186,7 +186,7 @@
 	better than the training one, since the regularisation is applied only to 
 	the train set and not to the validation.
 	
-	In this experiment, the validation accuracy is $73,3\%$, a little better 
+	In this experiment, the validation accuracy is $73.3\%$, a little better 
 	respect the previous model.
 	Instead, observing the loss curves, with this model there are no signs of 
 	overfitting but rather of underfitting. In fact, the training loss is  
@@ -211,10 +211,192 @@
 		\label{fig:model1-performance}
 	\end{figure}
 	  
-	
-	
-	\section{hyperparameter settings}
+	\section{Hyperparameter settings}
 	\label{section:hyperparam}
+	
+	In this section will be discussed $n$ different configuration for the 
+	hyperparameters of the network, with the aim of improving the validation 
+	accuracy. In particular, will be documented the performances according to 
+	the modification of the following hyperparameters: learning rate, 
+	mini-batch size, dropout and number of epochs.
+	Other hyperparameters, such as the loss function, the optimiser and the 
+	number of hidden units are never changed. %FIXME
+	
+	In Table \ref{tab:param} are presented the different hyperparameter 
+	settings of the models with the best performance. The other configurations  
+	tested will not be presented in this report due to their 
+	%fixmes
+	barely/insufficient results.  
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l@{\hspace{.5cm}}cccc}
+			\toprule
+			& \textbf{learning rate} & \textbf{batch size} & \textbf{dropout} & 
+			\textbf{epochs} \\
+			\midrule
+			\textbf{Model 1} & {1e-3} & {32}  &  -  & 50\\
+			\textbf{Model 2} & {1e-3} & {32}  & 0.5 & 50\\
+			\textbf{Model 3} & {1e-4} & {32}  & 0.5 & 50 \\
+			\textbf{Model 3b} & {1e-4} & {32} & 0.5 & 300 \\
+			\textbf{Model 4} & {1e-3} & {128} & 0.5 & 50 \\
+			\textbf{Model 5} & {1e-3} & {128} & 0.6 & 50 \\
+			\textbf{Model 6} & {1e-4} & {128} & 0.5 & 100 \\
+			\textbf{Model 7} & {1e-4} & {256} & 0.5 & 200 \\
+			\textbf{Model 8} & {1e-4} & {128} & 0.5 & 200 \\
+			\textbf{Model 9} & {1e-4} & {128} & 0.5 & 300 \\
+			\bottomrule 
+		\end{tabular}
+		\captionof{table}{Model hyperparameters}
+		\label{tab:param}
+	\end{table}
+
+	In Model 3, the unique change consists in the reduction of the learning 
+	rate from $0.001$ down to $0.0001$. 
+	
+	In Figure \ref{fig:model3-performance} is clearly visible the increase 
+	in accuracy and, in particular, the different trend of the curve. The 
+	accuracy now is $75.5\%$.
+	The same can be said for the loss curve which rapidly decreases towards $0$.
+	
+	A further modification to this model could consist in increasing the 
+	number of epochs since the curves have not yet stabilised.
+	
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/3-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/3-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on model 3}
+		\label{fig:model3-performance}
+	\end{figure}
+	
+	%FIXME new model with more epochs
+presented has  the  
+is carried out 
+\\
+	
+	In Model 4, the training phase has been carried out using $128$ sample for 
+	batch instead of $32$ and the learning rate has been restored to its 
+	original value of $0.001$. 
+	
+	The current accuracy is still increasing, in fact now it is $76,8\%$, but 
+	the increasing of the accuracy curve in Figure \ref{fig:model4-performance} 
+	is slower respect to the previous model.
+	
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/17-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/17-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on model 4}
+		\label{fig:model4-performance}
+	\end{figure}
+	
+	In Model 5, the dropout value is updated: the probability to keep each 
+	neuron is increased to $0.6$.
+	In this case, the performance has deteriorated. The accuracy is decreased 
+	to $69.7\%$ and the loss is increased, as can be seen in Figure 
+	\ref*{fig:model5-performance}.
+	
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/18-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/18-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the regularised model}
+		\label{fig:model5-performance}
+	\end{figure}
+	
+		
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/32-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/32-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the regularised model}
+		\label{fig:model6-performance}
+	\end{figure}
+	
+		
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/35-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/35-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the regularised model}
+		\label{fig:model7-performance}
+	\end{figure}
+	
+		
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/36-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/36-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the regularised model}
+		\label{fig:model8-performance}
+	\end{figure}
+	
+		
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/37-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/37-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on the regularised model}
+		\label{fig:model9-performance}
+	\end{figure}
+
 
 	\section{compute the test set accuracy and document the result.} 
 	\label{section:finalmodel}
