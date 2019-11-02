@@ -501,6 +501,13 @@ plot_setting(valid_accuracies, plot_dir, '37/', 300, True)
 ### Experiment 3b ###
 # main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, [0.5, 0])
 plot_setting(valid_accuracies, plot_dir, '3b/', 300)
+### Experiment 35b ###
+main(check_dir(out_dir, '35b/'), 1e-4, 256, 100, [0.5, 0])
+# plot_setting(valid_accuracies, plot_dir, '35b/', 100)
+
+### Experiment 2b ###
+main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, [0.5, 0])
+# plot_setting(valid_accuracies, plot_dir, '2b/', 300)
 
 valid_accuracies = sorted(valid_accuracies.items(), key=lambda t: t[1], reverse=True)
 print(valid_accuracies[:10])
