@@ -276,9 +276,11 @@
 	\end{figure}
 
 	A further modification to this model consist of the increasing the number 
-	of epochs, since the curves have not yet stabilised. The resulting 
-	performances are shown in Figure \ref{fig:model3b-performance}. The model 
-	has improved the accuracy of $9.9\%$, reaching  $85.4\%$.
+	of epochs, since the curves have not yet stabilised. Since the models are 
+	trained on GPU, which allows training without worsening the time too much. 
+	The resulting performances are shown in Figure 
+	\ref{fig:model3b-performance}. The model has improved the validation 
+	accuracy of $9.9\%$, reaching $85.4\%$.
 	
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
@@ -295,21 +297,18 @@
 		\caption{Training and validation loss on model 3b}
 		\label{fig:model3b-performance}
 	\end{figure}
-	
-presented has  the  
-is carried out 
-this means 
+
 
 	
 	In Model 4, the training phase has been carried out using $128$ sample for 
 	batch instead of $32$ and the learning rate has been restored to its 
 	original value of $0.001$. 
 	
-	The current accuracy is still increasing, in fact now it is $76,8\%$, but 
-	the increasing of the accuracy curve in Figure \ref{fig:model4-performance} 
-	is slower respect to the previous model.
+	The current validation accuracy is still increasing, in fact now it is 
+	$76.8\%$, but, as it can be seen in Figure \ref{fig:model4-performance}, 
+	the curve is growing slower respect to the previous model.
 	
-	\begin{figure}[htb]
+	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/17-Accuracy.png}
@@ -327,7 +326,7 @@ this means
 	
 	In Model 5, the dropout value is updated: the probability to keep each 
 	neuron is increased to $0.6$.
-	In this case, the performance has deteriorated. The accuracy is decreased 
+	In this case, the performance has deteriorated: the accuracy is decreased 
 	to $69.7\%$ and the loss is increased, as can be seen in Figure 
 	\ref*{fig:model5-performance}.
 	
@@ -343,10 +342,17 @@ this means
 			\includegraphics[width=\linewidth]{../src/out/img/18-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on the regularised model}
+		\caption{Training and validation loss on model 5}
 		\label{fig:model5-performance}
 	\end{figure}
 	
+	As a consequence of the worsening of the performance due to the 
+	modification of the learning rate and of the dropout, it was decided to set 
+	the learning rate to the previous value fo $0.0001$ and restore the dropout 
+	to the original value of $0.5$. Instead, the number of examples in the batch
+	has been kept equal to the previous experiments, that is $128$. 
+	Furthermore, the number of epochs has been increased to $100$.
+	The curves are shown in Figure \ref{fig:model6-performance}.
 		
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
@@ -360,11 +366,17 @@ this means
 			\includegraphics[width=\linewidth]{../src/out/img/32-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on the regularised model}
+		\caption{Training and validation loss on model 6}
 		\label{fig:model6-performance}
 	\end{figure}
+
+	This model has a validation accuracy of $76.2\%$, this means that it does 
+	not present further increasing with respect to the previous models.
+	%FIXME
+	The following model, whose performances are shown in Figure 
+	\ref{fig:model7-performance}, foresees an increase in the number of 
+	examples per batch up to $256$ and has been trained for $200$ epochs.
 	
-		
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
@@ -377,11 +389,15 @@ this means
 			\includegraphics[width=\linewidth]{../src/out/img/35-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on the regularised model}
+		\caption{Training and validation loss on model 7}
 		\label{fig:model7-performance}
 	\end{figure}
-	
-		
+	In this case the validation accuracy, which measures $78\%$ has improved 
+	compared to the latest models presented.
+		 
+		presented has  the  
+		is carried out 
+		this means 
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
