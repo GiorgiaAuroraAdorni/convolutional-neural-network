@@ -235,22 +235,44 @@
 			& \textbf{learning rate} & \textbf{batch size} & \textbf{dropout} & 
 			\textbf{epochs} \\
 			\midrule
-			\textbf{Model 1} & {1e-3} & {32}  &  -  & 50\\
-			\textbf{Model 2} & {1e-3} & {32}  & 0.5 & 50\\
-			\textbf{Model 3} & {1e-4} & {32}  & 0.5 & 50 \\
-			\textbf{Model 3b} & {1e-4} & {32} & 0.5 & 300 \\
-			\textbf{Model 4} & {1e-3} & {128} & 0.5 & 50 \\
-			\textbf{Model 5} & {1e-3} & {128} & 0.6 & 50 \\
-			\textbf{Model 6} & {1e-4} & {128} & 0.5 & 100 \\
-			\textbf{Model 7} & {1e-4} & {256} & 0.5 & 200 \\
-			\textbf{Model 8} & {1e-4} & {128} & 0.5 & 200 \\
-			\textbf{Model 9} & {1e-4} & {128} & 0.5 & 300 \\
+			\textbf{Model 1}  & {1e-3} & {32}  &  -  & 50\\
+			\textbf{Model 2}  & {1e-3} & {32}  & 0.5 & 50\\
+			\textbf{Model 2b} & {1e-3} & {32}  & 0.5 & 300\\
+			\textbf{Model 3}  & {1e-4} & {32}  & 0.5 & 50 \\
+			\textbf{Model 3b} & {1e-4} & {32}  & 0.5 & 300 \\
+			\textbf{Model 4}  & {1e-3} & {128} & 0.5 & 50 \\
+			\textbf{Model 5}  & {1e-3} & {128} & 0.6 & 50 \\
+			\textbf{Model 6}  & {1e-4} & {128} & 0.5 & 100 \\
+			\textbf{Model 7}  & {1e-4} & {256} & 0.5 & 100 \\
+			\textbf{Model 6b} & {1e-4} & {128} & 0.5 & 300 \\
 			\bottomrule 
 		\end{tabular}
 		\captionof{table}{Model hyperparameters}
 		\label{tab:param}
 	\end{table}
 
+	The first experiment performed simply consists in training the model for 
+	$300$ epochs, instead of $50$, keeping all other hyperparameters the same.
+	In Figure \ref{fig:model2b-performance} are shown the curves. Compared to 
+	the previous model the performances are more or less the same. 
+	This is because after a certain epoch the model has stopped learning.
+	
+	\begin{figure}[H]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/2b-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/2b-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on model 2b}
+		\label{fig:model2b-performance}
+	\end{figure}
+	
 	In Model 3, the unique change consists in the reduction of the learning 
 	rate from $0.001$ down to $0.0001$. 
 	
@@ -259,7 +281,7 @@
 	accuracy now is $75.5\%$.
 	The same can be said for the loss curve which rapidly decreases towards $0$.
 	
-	\begin{figure}[htb]
+	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/3-Accuracy.png}
@@ -330,7 +352,7 @@
 	to $69.7\%$ and the loss is increased, as can be seen in Figure 
 	\ref*{fig:model5-performance}.
 	
-	\begin{figure}[htb]
+	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/18-Accuracy.png}
@@ -354,7 +376,7 @@
 	Furthermore, the number of epochs has been increased to $100$.
 	The curves are shown in Figure \ref{fig:model6-performance}.
 		
-	\begin{figure}[htb]
+	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/32-Accuracy.png}
@@ -375,47 +397,34 @@
 	%FIXME
 	The following model, whose performances are shown in Figure 
 	\ref{fig:model7-performance}, foresees an increase in the number of 
-	examples per batch up to $256$ and has been trained for $200$ epochs.
+	examples per batch up to $256$ and has been trained for $100$ epochs.
 	
-	\begin{figure}[htb]
+	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{../src/out/img/35-Accuracy.png}
+			\includegraphics[width=\linewidth]{../src/out/img/35b-Accuracy.png}
 			\caption*{(a)}
 		\end{minipage}
 		~
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{../src/out/img/35-Loss.png}
+			\includegraphics[width=\linewidth]{../src/out/img/35b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
 		\caption{Training and validation loss on model 7}
 		\label{fig:model7-performance}
 	\end{figure}
-	In this case the validation accuracy, which measures $78\%$ has improved 
-	compared to the latest models presented.
-		 
-		presented has  the  
-		is carried out 
-		this means 
-	\begin{figure}[htb]
-		\begin{minipage}[c]{.49\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{../src/out/img/36-Accuracy.png}
-			\caption*{(a)}
-		\end{minipage}
-		~
-		\begin{minipage}[c]{.49\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{../src/out/img/36-Loss.png}
-			\caption*{(b)}
-		\end{minipage}
-		\caption{Training and validation loss on the regularised model}
-		\label{fig:model8-performance}
-	\end{figure}
+	In this case the validation accuracy, which measures $76.2\%$, got $4.6\%$ 
+	worse compared to the last model presented.
 	
+	For this reason, it was decided to retrain the model 6 for $300$ epochs, in 
+	order to compare it with the best current model, or the model 3b.
+	
+	The validation accuracy for this experiment is $82.7\%$, that is lower than 
+	that obtained with the model 3b. The curves are shown in Figure 
+	\ref{fig:model7-performance}.
 		
-	\begin{figure}[htb]
+	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/37-Accuracy.png}
@@ -427,11 +436,45 @@
 			\includegraphics[width=\linewidth]{../src/out/img/37-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on the regularised model}
-		\label{fig:model9-performance}
+		\caption{Training and validation loss on model 6b}
+		\label{fig:model6b-performance}
 	\end{figure}
 
+	In Table \ref{tab:performace} are summarised the performance of the 
+	presented models.
 
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l@{\hspace{.5cm}}cc|cc|c}
+			\toprule
+			& \multicolumn{2}{c}{\textbf{Accuracy}} & 
+			\multicolumn{2}{c}{\textbf{Loss}} & \multirow{2}*{\textbf{Train 
+			Time}} \\
+			& Train & Validation
+			& Train & Validation	& 						 		\\
+			\midrule
+			\textbf{Model 1} & 98.96\% & 72.00\%  & 0.05 & 3.79 & 427 sec \\
+			\textbf{Model 2} & 44.46\% & 73.30\%  & 1.48 & 0.89 & 427 sec \\
+			\textbf{Model 2b} & 45.69\% & 73.20\%  & 1.46 & 0.03 & 3006 sec \\
+			\textbf{Model 3} & 46.14\% & 75.50\%  & 1.41 & 0.03 & 435 sec \\
+			\textbf{Model 3b} & 54.67\% & \textbf{85.40\%}  & 1.08 & 0.46 & 
+			2550 sec \\
+			\textbf{Model 4} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 149 sec \\
+			\textbf{Model 5} & 36.60\% & 69.70\%  & 1.69 & 1.11 & 148 sec \\
+			\textbf{Model 6} & 46.37\% & 76.20\%  & 1.41 & 0.79 & 298 sec \\
+			\textbf{Model 7} & 43.65\% & 71.60\%  & 1.50 & 0.92 & 291 sec \\
+			\textbf{Model 6b} & 52.23\% & \textbf{82.70\%}  & 1.17 & 0.53 & 904 
+			sec \\
+			\bottomrule 
+		\end{tabular}
+		\captionof{table}{Model performances}
+		\label{tab:performace}
+	\end{table}
+
+	The model 3b is therefore the best among those proposed. As a further 
+	attempt to improve performance, batch normalization was added to the model 
+	3c.	
+	
 	\section{compute the test set accuracy and document the result.} 
 	\label{section:finalmodel}
 
