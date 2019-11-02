@@ -4,7 +4,7 @@ import numpy as np
 
 plot_dir = 'out/'
 
-model_dir = '3/'
+model_dir = '2b/'
 
 dir = plot_dir + model_dir
 set_dir = [dir + 'train.txt',
@@ -40,8 +40,8 @@ for line in valid_lines1:
 total_train_time = np.sum(train_time)
 total_valid_time = np.sum(valid_time)
 
-
+print(model_dir)
 print('total_train_time: ', total_train_time, total_train_time / train_time.size)
 print('total_valid_time: ', total_valid_time, total_valid_time / valid_time.size)
 print('train_loss: ', train_loss[-1], 'valid_loss: ', valid_loss[-1])
-print('train_accuracy: ', train_accuracy[-1], 'valid_accuracy: ', valid_accuracy[-1])
+print('train_accuracy {:.2f}%:  valid_accuracy {:.2f}%: '.format(train_accuracy[-1] * 100, valid_accuracy[-1] * 100))
