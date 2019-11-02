@@ -192,6 +192,9 @@ def net_param(model, learning_rate):
         optimizer = tf.train.AdamOptimizer(learning_rate)
         train = optimizer.minimize(loss)
 
+        # opt = tf.train.GradientDescentOptimizer(learning_rate)
+        # train = opt.compute_gradients(loss)
+
     return X, Y, Z, dropout, n_train, loss, accuracy, train
 
 
