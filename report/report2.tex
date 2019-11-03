@@ -91,6 +91,11 @@
 	All the models were implemented using \texttt{TensorFlow} and trained on a 
 	NVIDIA Tesla V100-PCIE-16GB GPU.
 	
+	%FIXME
+	Note: Since mini-batches are used during the training of the models, the 
+	loss and the accuracy of all samples is averaged, obtaining a less noisy 
+	estimate.
+	
 	\section{Performance of the initial model}
 	\label{section:model0}
 	In Table \ref{tab:model0} is summarised the architecture of the network 
@@ -135,7 +140,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/1-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on the initial model}
+		\caption{Training and validation curves on the initial model}
 		\label{fig:model0-performance}
 	\end{figure}
 	
@@ -207,7 +212,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/2-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on the regularised model}
+		\caption{Training and validation curves on the regularised model}
 		\label{fig:model1-performance}
 	\end{figure}
 	  
@@ -276,7 +281,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/3-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 3}
+		\caption{Training and validation curves on model 3}
 		\label{fig:model3-performance}
 	\end{figure}
 	
@@ -285,12 +290,7 @@
 	original value of $0.001$. 
 	Furthermore, the dropout value is updated: the probability to keep each 
 	neuron is increased to $0.6$. 
-	
-	In this case, the performance has deteriorated: the accuracy is reduced to 
-	$69.7\%$ and the loss is increased, although, as can be seen in Figure 
-	\ref*{fig:model5-performance}, the trend of the curve remains promising as 
-	in the previous model.
-	
+		
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
@@ -303,9 +303,15 @@
 			\includegraphics[width=\linewidth]{../src/out/img/4-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 4}
+		\caption{Training and validation curves on model 4}
 		\label{fig:model4-performance}
 	\end{figure}
+
+	In this case, the performance has deteriorated: the accuracy is reduced to 
+	$69.7\%$ and the loss is increased, although, as can be seen in Figure 
+	\ref*{fig:model5-performance}, the trend of the curve remains promising as 
+	in the previous model.
+	\newline
 	
 	In Model 5, number or samples for batches and the learning rate are kept 
 	equal to the previous experiment, while the dropout has been restored to 
@@ -327,7 +333,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/5-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 5}
+		\caption{Training and validation curves on model 5}
 		\label{fig:model5-performance}
 	\end{figure}
 
@@ -352,13 +358,14 @@
 			\includegraphics[width=\linewidth]{../src/out/img/6-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 6}
+		\caption{Training and validation curves on model 6}
 		\label{fig:model6-performance}
 	\end{figure}
 
 	Unfortunately the results obtained have worsened compared to all the 
 	previous performances. This model has a validation accuracy of $64.5\%$, 
 	even if the trend of the curve remains promising.
+	\newline
 	
 	The following model, whose performances are shown in Figure 
 	\ref{fig:model7-performance}, foresees an increase in the number of 
@@ -376,12 +383,13 @@
 			\includegraphics[width=\linewidth]{../src/out/img/7-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 7}
+		\caption{Training and validation curves on model 7}
 		\label{fig:model7-performance}
 	\end{figure}
 	In this case the validation accuracy, which measures $61.8\%$, is the worst 
 	measured so far. In fact, compared to the initial model presented this 
 	turns out to be even worse $10.8\%$. 
+	\newline
 	
 	For this reason, it was decided to retrain the model keeping the learning 
 	rate value at $0.001$ and the number of examples per batch at $256$.
@@ -400,7 +408,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/8-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 8}
+		\caption{Training and validation curves on model 8}
 		\label{fig:model8-performance}
 	\end{figure}
 
@@ -445,7 +453,8 @@
 	better accuracy values, but also on the others since the learning curves 
 	were not yet stabilized. The models are trained on GPU which allows 
 	training without worsening the time too much.
-		\begin{table}[htb]
+	
+	\begin{table}[htb]
 		\centering
 		\begin{tabular}{l@{\hspace{.5cm}}cccc}
 			\toprule
@@ -478,7 +487,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/3b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 3b}
+		\caption{Training and validation curves on model 3b}
 		\label{fig:model3b-performance}
 	\end{figure}
 
@@ -503,7 +512,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/4b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 4b}
+		\caption{Training and validation curves on model 4b}
 		\label{fig:model4b-performance}
 	\end{figure}
 	
@@ -527,7 +536,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/5b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 5b}
+		\caption{Training and validation curves on model 5b}
 		\label{fig:model5b-performance}
 	\end{figure}
 	
@@ -548,11 +557,11 @@
 			\includegraphics[width=\linewidth]{../src/out/img/6b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 6b}
+		\caption{Training and validation curves on model 6b}
 		\label{fig:model6b-performance}
 	\end{figure}
 
-	The next experiments was carrying out on model 7, the presented the worst 
+	The next experiments was carried out on model 7, the presented the worst 
 	performances. In this case, training the model for another $250$ increased 
 	the accuracy up to $79.4\%$, increasing it by $17.6\%$. Despite this, the 
 	model does not present a further improvement to those previously shown.
@@ -570,7 +579,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/7b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 7b}
+		\caption{Training and validation curves on model 7b}
 		\label{fig:model7b-performance}
 	\end{figure}
 
@@ -594,7 +603,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/8b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 8b}
+		\caption{Training and validation curves on model 8b}
 		\label{fig:model8b-performance}
 	\end{figure}
 
@@ -639,60 +648,26 @@
 
 	The following subsection will present a further attempt to improve 
 	performance, or the addition of batch normalisation to the best models.
+	
 	\subsection{Batch normalisation}
 	\label{subsection:batchnorm}
+	
+	In this Subsection are analysed the performances of the previous models 
+	after the addition of a batch normalisation after the convolutional layers. 
+	These experiments has been carried out only on four of the models 
+	presented, the ones that have obtained the better performances.
+	%{FIXME} why apply batch normalisation?
+	\newline
+	
+	The first experiment is carried out on model 3, that is the one with the 
+	best performances so far. The learning curves, displayed in Figure 
+	\ref{fig:model3c-performance}, shown that the accuracy is worst compared to 
+	the one of the model without batch normalisation. In fact, the current one 
+	is decreased of $3.8\%$, achieving $81.6\%$. %{FIXME: why?}
+	
+	Despite this, the trend of the curve seems to be still increasing.
 
-	this means that it does 
-	not present further increasing with respect to the previous models.
-	
-	
-	
-	The resulting performances are shown in Figure 
-	\ref{fig:model3b-performance}. 
-	
-	The validation accuracy for this experiment is $82.7\%$, that is lower 
-	than 
-	that obtained with the model 3b. The curves are shown in Figure 
-	\ref{fig:model7-performance}.
-
-	\begin{table}[H]
-		\centering
-		\begin{tabular}{l@{\hspace{.5cm}}cc|cc|c}
-			\toprule
-			& \multicolumn{2}{c}{\textbf{Accuracy}} & 
-			\multicolumn{2}{c}{\textbf{Loss}} & \multirow{2}*{\textbf{Train 
-					Time}} \\
-			& Train & Validation
-			& Train & Validation	& 						 		\\
-			\midrule
-			\textbf{Model 3} & 46.14\% & 75.50\%  & 1.41 & 0.03 & 435 sec \\
-			\textbf{Model 3b} & 54.67\% & \textbf{85.40\%}  & 1.08 & 0.46 & 
-			2550 sec \\
-			\textbf{Model 3c} & 49.57\% & \textbf{81.60\%}  & 1.29 & 0.55 & 
-			4171 sec \\
-			\textbf{Model 5} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 sec \\
-			\textbf{Model 5b} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 sec \\
-			\textbf{FIXME Model 5b} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 
-				sec \\
-			\textbf{Model 6} & 40.73\% & 64.50\%  & 1.61 & 1.10 & 153 sec \\
-			\textbf{Model 6b} & 52.23\% & \textbf{82.70\%}  & 1.17 & 0.53 & 904 
-			sec \\
-			\textbf{Model 6c} & 47.72\% & \textbf{80.00\%}  & 1.34 & 0.61 & 
-			1625 
-			sec \\
-			\textbf{Model 8}  & 48.96\% & 79.40\%  & 1.32 & 0.67 & 126 sec \\
-			\textbf{Model 8b} & 54.85\% & \textbf{81.00\%}  & 1.08 & 0.58 & 710 
-			sec \\
-			\textbf{FIXMEModel 8c} & 54.85\% & \textbf{81.00\%}  & 1.08 & 0.58 
-			& 710 
-			sec \\
-			\bottomrule 
-		\end{tabular}
-		\captionof{table}{Model performances}
-		\label{tab:performace3}
-	\end{table}
-
-	\begin{figure}[H]
+	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/3c-Accuracy.png}
@@ -704,12 +679,17 @@
 			\includegraphics[width=\linewidth]{../src/out/img/3c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 3c (with batch 
+		\caption{Training and validation curves on model 3c (with batch 
 		normalisation)}
 		\label{fig:model3c-performance}
 	\end{figure}
-
-	\begin{figure}[H]
+	
+	The next experiment is performed on model 5. In this case, the batch 
+	normalisation increases the validation accuracy of the previous model of 
+	$4\%$, reaching the new best results of $86.1\%$, as shown in Figure 
+	\ref{fig:model5c-performance}.
+	
+	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/5c-Accuracy.png}
@@ -721,13 +701,17 @@
 			\includegraphics[width=\linewidth]{../src/out/img/5c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 5c (with batch 
+		\caption{Training and validation curves on model 5c (with batch 
 			normalisation)}
 		\label{fig:model5c-performance}
 	\end{figure}
+	
+	The following experiment has achieved poor result, as for the model 3c. The 
+	validation accuracy is decreased down to $80.0\%$, even if the curves is 
+	still growing as can be seen in Figure \ref{fig:model6c-performance}. 
+	\newline
 
-
-	\begin{figure}[H]
+	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/6c-Accuracy.png}
@@ -739,12 +723,19 @@
 			\includegraphics[width=\linewidth]{../src/out/img/6c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 6c (with batch 
+		\caption{Training and validation curves on model 6c (with batch 
 		normalisation)}
 		\label{fig:model6c-performance}
 	\end{figure}
 
-	\begin{figure}[H]
+	The last experiment performed is able to further increase the validation 
+	accuracy of $5.4\%$ respect to the model without batch normalisation, 
+	reaching the value of $86.4\%$, that this the best results over all the 
+	experiments presented.
+	The performances are shown in Figure \ref{fig:model8c-performance}.
+	\newline
+
+	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/8c-Accuracy.png}
@@ -756,34 +747,73 @@
 			\includegraphics[width=\linewidth]{../src/out/img/8c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 8c (with batch 
+		\caption{Training and validation curves on model 8c (with batch 
 		normalisation)}
 		\label{fig:model8c-performance}
 	\end{figure}
 	
-	\section{compute the test set accuracy and document the result.} 
+	The following Table summarise the latest results obtained.
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l@{\hspace{.5cm}}cc|cc|c}
+			\toprule
+			& \multicolumn{2}{c}{\textbf{Accuracy}} & 
+			\multicolumn{2}{c}{\textbf{Loss}} & \multirow{2}*{\textbf{Train 
+					Time}} \\
+			& Train & Validation
+			& Train & Validation	& 						 		\\
+			\midrule
+			\textbf{Model 3c} & 49.57\% & {81.60\%}  & 1.29 & 0.55 & 4171 sec \\
+			\textbf{Model 5c} & 55.65\% & {86.10\%}  & 1.04 & 0.44 & 1630 sec \\
+			\textbf{Model 6c} & 47.72\% & {80.00\%}  & 1.34 & 0.61 & 1625 sec \\
+			\textbf{Model 8c} & 55.85\% & \textbf{86.40\%}  & 1.03 & 0.47 & 
+			1204 sec \\
+			\bottomrule 
+		\end{tabular}
+		\captionof{table}{Model performances after the batch normalisation}
+		\label{tab:performace3}
+	\end{table}
+
+	\section{Test set accuracy} 
 	\label{section:finalmodel}
+	The test set accuracy was measured on the model 8c. As can be seen in 
+	Figure \ref{fig:model8c-test-performance} and summarised in Table 
+	\ref{tab:performace-m8c}, also on the test the performances of the model 
+	are high. The test accuracy reached $85.03\%$, just $1.1\%$ worst than the 
+	validation, and the test loss is $0.50$.
 	
-	Il training è stato arrestato dopo 300 epoche.
-	
-%	\begin{figure}[H]
-%		\begin{minipage}[c]{.49\textwidth}
-%			\centering
-%			
-%\includegraphics[width=0.85\linewidth]{../src/img/loss/model8-loss-test.jpg}
-%			%\caption*{model8-loss-test}
-%			%\label{fig:model8-loss-test}
-%		\end{minipage}
-%		~
-%		\begin{minipage}[c]{.49\textwidth}
-%			\centering
-%			
-%\includegraphics[width=1\linewidth]{../src/img/model8-test-polynomial+dataset.png}
-%			%\caption*{model8-test-polynomial+dataset}
-%			%\label{fig:model8-test-polynomial+dataset}
-%		\end{minipage}
-%	\caption{Polynomial of 4th degree over $8000$ iterations}
-%	\label{fig:model8-test}
-%	\end{figure}
+	\begin{figure}[htb]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/8c-test-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/8c-test-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Test curves of model 8c}
+		\label{fig:model8c-test-performance}
+	\end{figure}
+
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l@{\hspace{.5cm}}ccc|ccc}
+			\toprule
+			& \multicolumn{3}{c}{\textbf{Accuracy}} & 
+			\multicolumn{3}{c}{\textbf{Loss}} \\
+			& Train & Validation & Test	& Train & Validation & Test \\
+			\midrule
+			\textbf{Model 8c} & 55.85\% & {86.40\%} & \textbf{85.03\%} & 1.03 & 
+			0.47 & \textbf{0.50} \\
+			\bottomrule 
+		\end{tabular}
+		\captionof{table}{Test set performances of the choosen model}
+		\label{tab:performace-m8c}
+	\end{table}
+
 
 \end{document}
