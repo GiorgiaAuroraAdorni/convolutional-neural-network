@@ -210,10 +210,22 @@ def conv_net(X, dropout):
     b_conv1 = tf.Variable(tf.zeros(shape=(32,)))
     A_conv1 = tf.nn.relu(tf.nn.conv2d(X, W_conv1, strides=[1, 1, 1, 1], padding='SAME') + b_conv1)
 
+    # num_out_nodes = W_conv1.shape[-1]
+    # gamma = tf.Variable(tf.ones([num_out_nodes]))
+    # beta = tf.Variable(tf.zeros([num_out_nodes]))
+    # batch_mean, batch_variance = tf.nn.moments(A_conv1, [0])
+    # A_conv1 = tf.nn.batch_normalization(A_conv1, batch_mean, batch_variance, beta, gamma, 1e-3)
+
     # (b) Convolutional layer 2: 32 filters, 3 × 3.
     W_conv2 = tf.Variable(tf.truncated_normal([3, 3, 32, 32], stddev=0.1))
     b_conv2 = tf.Variable(tf.zeros(shape=(32,)))
     A_conv2 = tf.nn.relu(tf.nn.conv2d(A_conv1, W_conv2, strides=[1, 1, 1, 1], padding='SAME') + b_conv2)
+
+    # num_out_nodes = W_conv2.shape[-1]
+    # gamma = tf.Variable(tf.ones([num_out_nodes]))
+    # beta = tf.Variable(tf.zeros([num_out_nodes]))
+    # batch_mean, batch_variance = tf.nn.moments(A_conv2, [0])
+    # A_conv2 = tf.nn.batch_normalization(A_conv2, batch_mean, batch_variance, beta, gamma, 1e-3)
 
     # (c) Max-pooling layer 1: 2 × 2 windows.
     A_pool1 = tf.nn.max_pool(A_conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
@@ -225,10 +237,22 @@ def conv_net(X, dropout):
     b_conv3 = tf.Variable(tf.zeros(shape=(64,)))
     A_conv3 = tf.nn.relu(tf.nn.conv2d(A_pool1, W_conv3, strides=[1, 1, 1, 1], padding='SAME') + b_conv3)
 
+    # num_out_nodes = W_conv3.shape[-1]
+    # gamma = tf.Variable(tf.ones([num_out_nodes]))
+    # beta = tf.Variable(tf.zeros([num_out_nodes]))
+    # batch_mean, batch_variance = tf.nn.moments(A_conv3, [0])
+    # A_conv3 = tf.nn.batch_normalization(A_conv3, batch_mean, batch_variance, beta, gamma, 1e-3)
+
     # (e) Convolutional layer 4: 64 filters, 3 × 3.
     W_conv4 = tf.Variable(tf.truncated_normal([3, 3, 64, 64], stddev=0.1))
     b_conv4 = tf.Variable(tf.zeros(shape=(64,)))
     A_conv4 = tf.nn.relu(tf.nn.conv2d(A_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME') + b_conv4)
+
+    # num_out_nodes = W_conv4.shape[-1]
+    # gamma = tf.Variable(tf.ones([num_out_nodes]))
+    # beta = tf.Variable(tf.zeros([num_out_nodes]))
+    # batch_mean, batch_variance = tf.nn.moments(A_conv4, [0])
+    # A_conv4 = tf.nn.batch_normalization(A_conv4, batch_mean, batch_variance, beta, gamma, 1e-3)
 
     # (f) Max-pooling layer 2: 2 × 2 windows.
     A_pool2 = tf.nn.max_pool(A_conv4, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
@@ -358,14 +382,85 @@ valid_accuracies = OrderedDict()
 ### Experiment 1 ###
 # main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
 plot_setting(valid_accuracies, plot_dir, '1/', 50)
-
+#
 ### Experiment 2 ###
 # main(check_dir(out_dir, '2/'), 1e-3, 32, 50, [0.5, 0])
 plot_setting(valid_accuracies, plot_dir, '2/', 50)
 
+### Experiment 2b ###
+# main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '2b/', 300)
+
 ### Experiment 3 ###
 # main(check_dir(out_dir, '3/'), 1e-4, 32, 50, [0.5, 0])
 plot_setting(valid_accuracies, plot_dir, '3/', 50)
+
+### Experiment 3b ###
+# main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '3b/', 300)
+
+### Experiment 3c - batch normalisation ###
+# main(check_dir(out_dir, '3c/'), 1e-4, 32, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '3c/', 300)
+
+### Experiment 18 ###
+# main(check_dir(out_dir, '18/'), 1e-3, 128, 50, [0.6, 0])
+plot_setting(valid_accuracies, plot_dir, '4/', 50)
+
+### Experiment 4b ###
+# main(check_dir(out_dir, '4b/'), 1e-3, 128, 300, [0.6, 0])
+plot_setting(valid_accuracies, plot_dir, '4b/', 300)
+
+### Experiment 17 ###
+# main(check_dir(out_dir, '17/'), 1e-3, 128, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '5/', 50)
+
+### Experiment 5b ###
+# main(check_dir(out_dir, '5b/'), 1e-3, 128, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '5b/', 300)
+
+### Experiment 5c ###
+# main(check_dir(out_dir, '5c/'), 1e-3, 128, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '5c/', 300)
+
+### Experiment 32a ###
+# main(check_dir(out_dir, '32a/'), 1e-4, 128, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '6/', 50)
+
+### Experiment 32b ###
+# main(check_dir(out_dir, '32b/'), 1e-4, 128, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '6b/', 300)
+
+### Experiment 32c - batch normalisation ######
+# main(check_dir(out_dir, '32c/'), 1e-4, 128, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '6c/', 300)
+
+### Experiment 35a ###
+# main(check_dir(out_dir, '35a/'), 1e-4, 256, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '7/', 50)
+
+### Experiment 35b ###
+# main(check_dir(out_dir, '35b/'), 1e-4, 256, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '7b/', 300)
+
+### Experiment 35c - batch normalisation ###
+# main(check_dir(out_dir, '35c/'), 1e-4, 256, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '7c/', 300)
+
+### Experiment 40 ###
+# main(check_dir(out_dir, '40/'), 1e-3, 256, 50, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '8/', 50)
+
+### Experiment 40b ###
+# main(check_dir(out_dir, '40b/'), 1e-3, 256, 300, [0.5, 0])
+plot_setting(valid_accuracies, plot_dir, '8b/', 300)
+
+### Experiment 8c ###
+# main(check_dir(out_dir, '8c/'), 1e-3, 256, 300, [0.5, 0], True)
+plot_setting(valid_accuracies, plot_dir, '8c/', 300, True)
+
+################################################################################
+
 
 ### Experiment 4 ###
 # main(check_dir(out_dir, '4/'), 1e-4, 64, 50, [0.5, 0])
@@ -418,14 +513,6 @@ plot_setting(valid_accuracies, plot_dir, '3/', 50)
 # main(check_dir(out_dir, '16/'), 1e-5, 32, 50, [0.5, 0])
 # plot_setting(valid_accuracies, plot_dir, '16/', 50)
 
-### Experiment 17 ###
-# main(check_dir(out_dir, '17/'), 1e-3, 128, 50, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '17/', 50)
-
-### Experiment 18 ###
-# main(check_dir(out_dir, '18/'), 1e-3, 128, 50, [0.6, 0])
-plot_setting(valid_accuracies, plot_dir, '18/', 50)
-
 ### Experiment 19 ###
 # main(check_dir(out_dir, '19/'), 1e-3, 128, 50, [0.7, 0])
 # plot_setting(valid_accuracies, plot_dir, '19/', 50)
@@ -476,7 +563,7 @@ plot_setting(valid_accuracies, plot_dir, '18/', 50)
 
 ### Experiment 32 ###
 # main(check_dir(out_dir, '32/'), 1e-4, 128, 100, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '32/', 100)
+# plot_setting(valid_accuracies, plot_dir, '32/', 100)
 
 ### Experiment 33 ###
 # main(check_dir(out_dir, '33/'), 1e-4, 128, 200, [0.6, 0])
@@ -488,26 +575,16 @@ plot_setting(valid_accuracies, plot_dir, '32/', 100)
 
 ### Experiment 35 ###
 # main(check_dir(out_dir, '35/'), 1e-4, 256, 200, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '35/', 200)
+# plot_setting(valid_accuracies, plot_dir, '35/', 200)
 
 ### Experiment 36 ###
 # main(check_dir(out_dir, '36/'), 1e-4, 128, 200, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '36/', 200)
+# plot_setting(valid_accuracies, plot_dir, '36/', 200)
 
-### Experiment 37 ###
-# main(check_dir(out_dir, '37/'), 1e-4, 128, 300, [0.5, 0], True)
-plot_setting(valid_accuracies, plot_dir, '37/', 300, True)
 
-### Experiment 3b ###
-# main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, [0.5, 0])
-plot_setting(valid_accuracies, plot_dir, '3b/', 300)
-### Experiment 35b ###
-main(check_dir(out_dir, '35b/'), 1e-4, 256, 100, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '35b/', 100)
-
-### Experiment 2b ###
-main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, [0.5, 0])
-# plot_setting(valid_accuracies, plot_dir, '2b/', 300)
+################################################################################
 
 valid_accuracies = sorted(valid_accuracies.items(), key=lambda t: t[1], reverse=True)
+
+print(valid_accuracies)
 print(valid_accuracies[:10])
