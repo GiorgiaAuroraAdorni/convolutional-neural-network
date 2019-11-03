@@ -632,17 +632,28 @@
 			sec \\
 			\bottomrule 
 		\end{tabular}
-			\textbf{Model 1} & 98.96\% & 72.00\%  & 0.05 & 3.79 & 427 sec \\
-			\textbf{Model 2} & 44.46\% & 73.30\%  & 1.48 & 0.89 & 427 sec \\
-			\textbf{Model 2b} & 45.69\% & 73.20\%  & 1.46 & 0.03 & 3006 sec \\
 		\captionof{table}{Model performances after increasing the number of 
 		epochs}
 		\label{tab:performace2}
 	\end{table}
 
-			\textbf{Model 4} & 36.60\% & 69.70\%  & 1.69 & 1.11 & 148 sec \\
 	The following subsection will present a further attempt to improve 
 	performance, or the addition of batch normalisation to the best models.
+	\subsection{Batch normalisation}
+	\label{subsection:batchnorm}
+
+	this means that it does 
+	not present further increasing with respect to the previous models.
+	
+	
+	
+	The resulting performances are shown in Figure 
+	\ref{fig:model3b-performance}. 
+	
+	The validation accuracy for this experiment is $82.7\%$, that is lower 
+	than 
+	that obtained with the model 3b. The curves are shown in Figure 
+	\ref{fig:model7-performance}.
 
 	\begin{table}[H]
 		\centering
@@ -661,15 +672,20 @@
 			4171 sec \\
 			\textbf{Model 5} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 sec \\
 			\textbf{Model 5b} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 sec \\
+			\textbf{FIXME Model 5b} & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 
+				sec \\
 			\textbf{Model 6} & 40.73\% & 64.50\%  & 1.61 & 1.10 & 153 sec \\
 			\textbf{Model 6b} & 52.23\% & \textbf{82.70\%}  & 1.17 & 0.53 & 904 
 			sec \\
 			\textbf{Model 6c} & 47.72\% & \textbf{80.00\%}  & 1.34 & 0.61 & 
 			1625 
 			sec \\
-			\textbf{Model 7} & 38.72\% & 61.80\%  & 1.29 & 0.03 & 123 sec \\
-			\textbf{Model 7b} & 50.22\% & 79.40\%  & 1.25 & 0.66 & 772 sec \\
-			\textbf{Model 7c} & 50.88\% & 80.30\%  & 1.23 & 0.63 & 772 sec \\
+			\textbf{Model 8}  & 48.96\% & 79.40\%  & 1.32 & 0.67 & 126 sec \\
+			\textbf{Model 8b} & 54.85\% & \textbf{81.00\%}  & 1.08 & 0.58 & 710 
+			sec \\
+			\textbf{FIXMEModel 8c} & 54.85\% & \textbf{81.00\%}  & 1.08 & 0.58 
+			& 710 
+			sec \\
 			\bottomrule 
 		\end{tabular}
 		\captionof{table}{Model performances}
@@ -696,6 +712,24 @@
 	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/5c-Accuracy.png}
+			\caption*{(a)}
+		\end{minipage}
+		~
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../src/out/img/5c-Loss.png}
+			\caption*{(b)}
+		\end{minipage}
+		\caption{Training and validation loss on model 5c (with batch 
+			normalisation)}
+		\label{fig:model5c-performance}
+	\end{figure}
+
+
+	\begin{figure}[H]
+		\begin{minipage}[c]{.49\textwidth}
+			\centering
 			\includegraphics[width=\linewidth]{../src/out/img/6c-Accuracy.png}
 			\caption*{(a)}
 		\end{minipage}
@@ -713,18 +747,18 @@
 	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{../src/out/img/7c-Accuracy.png}
+			\includegraphics[width=\linewidth]{../src/out/img/8c-Accuracy.png}
 			\caption*{(a)}
 		\end{minipage}
 		~
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{../src/out/img/7c-Loss.png}
+			\includegraphics[width=\linewidth]{../src/out/img/8c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation loss on model 7c (with batch 
+		\caption{Training and validation loss on model 8c (with batch 
 		normalisation)}
-		\label{fig:model7c-performance}
+		\label{fig:model8c-performance}
 	\end{figure}
 	
 	\section{compute the test set accuracy and document the result.} 
