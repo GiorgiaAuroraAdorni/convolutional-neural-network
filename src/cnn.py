@@ -324,7 +324,11 @@ def main(set_dir, learning_rate, batch_size, epochs, drop_values=None, final=Fal
     f_valid.write('epoch, loss, accuracy, time\n')
     f_test.write('epoch, loss, accuracy, time\n')
 
-    session = tf.Session()
+    # Avoid allocating all GPU memory upfront.
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+
+    session = tf.Session(config=config)
     session.run(tf.global_variables_initializer())
 
     print('Model: {}.'.format(set_dir))
