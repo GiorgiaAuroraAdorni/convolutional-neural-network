@@ -173,14 +173,15 @@ def net_param(model, learning_rate, batch_norm):
     :param model: current model
     :param learning_rate: learning rate of the model
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
-    :return X, Y, Z, dropout, n_train, loss, accuracy, train
+    :return X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train
     """
     with tf.variable_scope("model_{}".format(model)):
-        dropout = tf.placeholder(tf.float32, [], name='dropout')
         X = tf.placeholder(tf.float32, [None, 32, 32, 3], name='X')
         Y = tf.placeholder(tf.float32, [None, 10], name='Y')
+        dropout_mpool = tf.placeholder(tf.float32, [], name='dropout_mpool')
+        dropout_fc = tf.placeholder(tf.float32, [], name='dropout_fc')
 
-        Z = conv_net(X, dropout, batch_norm)
+        Z = conv_net(X, dropout_mpool, dropout_fc, batch_norm)
 
         # Loss function
         loss = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=Z)
@@ -196,14 +197,15 @@ def net_param(model, learning_rate, batch_norm):
         # opt = tf.train.GradientDescentOptimizer(learning_rate)
         # train = opt.compute_gradients(loss)
 
-    return X, Y, Z, dropout, n_train, loss, accuracy, train
+    return X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train
 
 
-def conv_net(X, dropout, batch_norm):
+def conv_net(X, dropout_mpool, dropout_fc, batch_norm):
     """
 
     :param X: input
-    :param dropout: placeholder that represent the probability to keep each neuron
+    :param dropout_mpool: placeholder that represent the probability to keep each neuron (after the max pooling layers)
+    :param dropout_fc: placeholder that represent the probability to keep each neuron (after the fully connected layers)
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
     :return Z: output
     """
@@ -238,7 +240,7 @@ def conv_net(X, dropout, batch_norm):
     # (c) Max-pooling layer 1: 2 × 2 windows.
     A_pool1 = tf.nn.max_pool(A_conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
-    A_pool1 = tf.nn.dropout(A_pool1, rate=dropout)
+    A_pool1 = tf.nn.dropout(A_pool1, rate=dropout_mpool)
 
     # (d) Convolutional layer 3: 64 filters, 3 × 3.
     W_conv3 = tf.Variable(tf.truncated_normal([3, 3, 32, 64], stddev=0.1))
@@ -270,7 +272,7 @@ def conv_net(X, dropout, batch_norm):
 
     # (f) Max-pooling layer 2: 2 × 2 windows.
     A_pool2 = tf.nn.max_pool(A_conv4, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-    A_pool2 = tf.nn.dropout(A_pool2, rate=dropout)
+    A_pool2 = tf.nn.dropout(A_pool2, rate=dropout_mpool)
     A_pool2_flat = tf.reshape(A_pool2, [-1, 8 * 8 * 64])  # ? x 3136
 
     # (g) Fully connected layer 1: 512 units.
@@ -286,7 +288,7 @@ def conv_net(X, dropout, batch_norm):
         A_fc1 = tf.nn.batch_normalization(A_fc1, batch_mean, batch_variance, beta, gamma, 1e-3)
 
     A_fc1 = tf.nn.relu(A_fc1)
-    A_fc1 = tf.nn.dropout(A_fc1, rate=dropout)
+    A_fc1 = tf.nn.dropout(A_fc1, rate=dropout_fc)
 
     # (h) Softmax output layer.
     W_fc2 = tf.Variable(tf.truncated_normal([512, 10], stddev=0.1))
@@ -296,20 +298,22 @@ def conv_net(X, dropout, batch_norm):
     return Z
 
 
-def main(set_dir, learning_rate, batch_size, epochs, d=0.0, final=False, batch_norm=False):
+def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, final=False, batch_norm=False):
     """
 
     :param set_dir: a list containing the path for the 3 output files containing the performances
     :param learning_rate: learning rate of the model
     :param batch_size: samples contained in each batch
     :param epochs: number of epochs for the model
-    :param d: dropout represent the probability to keep each neuron during the training. The default value is 0 for
-              both, that corresponds to keep the neuron with probability 1.
+    :param d_mpool: dropout represent the probability to keep each neuron during the training. The default value is 0 for
+                    both, that corresponds to keep the neuron with probability 1 after max pooling layers.
+    :param d_fc: dropout represent the probability to keep each neuron during the training. The default value is 0 for
+                both, that corresponds to keep the neuron with probability 1 after fully connected layers.
     :param final: boolean parameter that is True if only if the model is the one selected for the final test
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
     """
     # Network Parameters
-    X, Y, Z, dropout, n_train, loss, accuracy, train = net_param(1, learning_rate, batch_norm)
+    X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train = net_param(1, learning_rate, batch_norm)
 
     f_train = open(set_dir[0], "w")
     f_valid = open(set_dir[1], "w")
@@ -345,9 +349,11 @@ def main(set_dir, learning_rate, batch_size, epochs, d=0.0, final=False, batch_n
             batch = [x_train[batch_indices], y_train[batch_indices]]
 
             # Train
-
             train_loss, train_accuracy, _ = session.run([loss, accuracy, train],
-                                                        feed_dict={X: batch[0], Y: batch[1], dropout: d})
+                                                        feed_dict={X: batch[0],
+                                                                   Y: batch[1],
+                                                                   dropout_mpool: d_mpool,
+                                                                   dropout_fc: d_mpool})
 
             avg_accuracy += train_accuracy * y_train[batch_indices].shape[0]
             avg_loss += train_loss * y_train[batch_indices].shape[0]
@@ -365,7 +371,10 @@ def main(set_dir, learning_rate, batch_size, epochs, d=0.0, final=False, batch_n
         print("Starting validation…")
         valid_start = time.time()
         validation_loss, validation_accuracy = session.run([loss, accuracy],
-                                                           feed_dict={X: x_valid, Y: y_valid, dropout: 0})
+                                                           feed_dict={X: x_valid,
+                                                                      Y: y_valid,
+                                                                      dropout_mpool: d_mpool,
+                                                                      dropout_fc: d_mpool})
         valid_end = time.time()
         valid_time = valid_end - valid_start
 
@@ -378,7 +387,10 @@ def main(set_dir, learning_rate, batch_size, epochs, d=0.0, final=False, batch_n
             print("Starting test…")
             test_start = time.time()
             test_loss, test_accuracy = session.run([loss, accuracy],
-                                                   feed_dict={X: x_test, Y: y_test, dropout: 0})
+                                                   feed_dict={X: x_test,
+                                                              Y: y_test,
+                                                              dropout_mpool: d_mpool,
+                                                              dropout_fc: d_mpool})
             test_end = time.time()
             test_time = test_end - test_start
 
@@ -401,81 +413,88 @@ plot_dir = 'out/'
 valid_accuracies = OrderedDict()
 
 ### Experiment 1 ###
-main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
+# main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
 # plot_setting(valid_accuracies, plot_dir, '1/', 50)
 
 ### Experiment 2 ###
-main(check_dir(out_dir, '2/'), 1e-3, 32, 50, 0.5)
+# main(check_dir(out_dir, '2/'), 1e-3, 32, 50, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '2/', 50)
 
 ### Experiment 2b ###
-main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, 0.5)
+# main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '2b/', 300)
 
 ### Experiment 3 ###
-main(check_dir(out_dir, '3/'), 1e-4, 32, 50, 0.5)
+# main(check_dir(out_dir, '3/'), 1e-4, 32, 50, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '3/', 50)
 
 ### Experiment 3b ###
-main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, 0.5)
+# main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '3b/', 300)
 
 ### Experiment 3c - batch normalisation ###
-main(check_dir(out_dir, '3c/'), 1e-4, 32, 300, 0.5, batch_norm=True)
+# main(check_dir(out_dir, '3c/'), 1e-4, 32, 300, 0.5, batch_norm=True)
 # plot_setting(valid_accuracies, plot_dir, '3c/', 300)
 
 ### Experiment 4 ###
-main(check_dir(out_dir, '4/'), 1e-3, 128, 50, 0.6)
+# main(check_dir(out_dir, '4/'), 1e-3, 128, 50, 0.6)
 # plot_setting(valid_accuracies, plot_dir, '4/', 50)
 
 ### Experiment 4b ###
-main(check_dir(out_dir, '4b/'), 1e-3, 128, 300, 0.6)
+# main(check_dir(out_dir, '4b/'), 1e-3, 128, 300, 0.6)
 # plot_setting(valid_accuracies, plot_dir, '4b/', 300)
 
 ### Experiment 5 ###
-main(check_dir(out_dir, '5/'), 1e-3, 128, 50, 0.5)
+# main(check_dir(out_dir, '5/'), 1e-3, 128, 50, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '5/', 50)
 
 ### Experiment 5b ###
-main(check_dir(out_dir, '5b/'), 1e-3, 128, 300, 0.5)
+# main(check_dir(out_dir, '5b/'), 1e-3, 128, 300, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '5b/', 300)
 
 ### Experiment 5c ###
-main(check_dir(out_dir, '5c/'), 1e-3, 128, 300, 0.5, batch_norm=True)
+main(check_dir(out_dir, '5c/'), 1e-3, 128, 300, 0.5, final=True, batch_norm=True)
 # plot_setting(valid_accuracies, plot_dir, '5c/', 300)
+# plot_setting(valid_accuracies, plot_dir, '5c-test/', 300, True)
+
+# main(check_dir(out_dir, '5d/'), 1e-3, 128, 300, 0.25, 0.5, batch_norm=True)
+# plot_setting(valid_accuracies, plot_dir, '5d/', 300)
+
+# main(check_dir(out_dir, '5f/'), 1e-3, 128, 300, 0.5, batch_norm=True)
+# plot_setting(valid_accuracies, plot_dir, '5f/', 300)
 
 ### Experiment 6 ###
-main(check_dir(out_dir, '6/'), 1e-4, 128, 50, 0.5)
+# main(check_dir(out_dir, '6/'), 1e-4, 128, 50, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '6/', 50)
 
 ### Experiment 6b ###
-main(check_dir(out_dir, '6b/'), 1e-4, 128, 300, 0.5)
+# main(check_dir(out_dir, '6b/'), 1e-4, 128, 300, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '6b/', 300)
 
 ### Experiment 6c - batch normalisation ######
-main(check_dir(out_dir, '6c/'), 1e-4, 128, 300, 0.5, batch_norm=True)
+# main(check_dir(out_dir, '6c/'), 1e-4, 128, 300, 0.5, batch_norm=True)
 # plot_setting(valid_accuracies, plot_dir, '6c/', 300)
 
 ### Experiment 7 ###
-main(check_dir(out_dir, '7/'), 1e-4, 256, 50, 0.5)
+# main(check_dir(out_dir, '7/'), 1e-4, 256, 50, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '7/', 50)
 
 ### Experiment 7b ###
-main(check_dir(out_dir, '7b/'), 1e-4, 256, 300, 0.5)
+# main(check_dir(out_dir, '7b/'), 1e-4, 256, 300, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '7b/', 300)
 
 ### Experiment 8 ###
-main(check_dir(out_dir, '8/'), 1e-3, 256, 50, 0.5)
+# main(check_dir(out_dir, '8/'), 1e-3, 256, 50, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '8/', 50)
 
 ### Experiment 8b ###
-main(check_dir(out_dir, '8b/'), 1e-3, 256, 300, 0.5)
+# main(check_dir(out_dir, '8b/'), 1e-3, 256, 300, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '8b/', 300)
 
 ### Experiment 8c ###
-main(check_dir(out_dir, '8c/'), 1e-3, 256, 300, 0.5, final=True, batch_norm=True)
+# main(check_dir(out_dir, '8c/'), 1e-3, 256, 300, 0.5, batch_norm=True)
 # plot_setting(valid_accuracies, plot_dir, '8c/', 300)
-# plot_setting(valid_accuracies, plot_dir, '8c-test/', 300, True)
+
 
 ################################################################################
 

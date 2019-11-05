@@ -4,8 +4,8 @@ import numpy as np
 
 plot_dir = 'out/'
 
-model_dirs = ['1/', '2/', '2b/', '3/', '3b/', '3c/', '4/', '4b/', '5/', '5b/', '5c/', '6/', '6b/', '6c/', '7/',
-              '7b/', '7c/', '8/', '8b/', '8c/']
+model_dirs = ['1/', '2/', '2b/', '3/', '3b/', '3c/', '4/', '4b/', '5/', '5b/', '5c/', '5d/', '5f/', '6/', '6b/', '6c/',
+              '7/', '7b/', '8/', '8b/', '8c/']
 
 for model_dir in model_dirs:
     dir = plot_dir + model_dir
@@ -43,7 +43,7 @@ for model_dir in model_dirs:
     total_valid_time = np.sum(valid_time)
 
     print(model_dir)
-    print('total_train_time: ', total_train_time, total_train_time / train_time.size)
-    print('total_valid_time: ', total_valid_time, total_valid_time / valid_time.size)
+    print('total_train_time: ', total_train_time)
+    # print('total_valid_time: ', total_valid_time, total_valid_time / valid_time.size)
     print('train_loss: ', train_loss[-1], 'valid_loss: ', valid_loss[-1])
     print('train_accuracy {:.2f}%:  valid_accuracy {:.2f}%: '.format(train_accuracy[-1] * 100, valid_accuracy[-1] * 100))
