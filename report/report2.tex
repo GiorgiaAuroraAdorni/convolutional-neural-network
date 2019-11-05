@@ -145,11 +145,30 @@
 	\end{figure}
 	
 	As can be seen in Figure (a), the train accuracy rapidly grows up to 
-	$1.00$, while the validation accuracy remains stable at $0.70$.  
-	The final accuracy on the valid set is $72\%$.
+	$100\%$, while the validation accuracy remains stable at $70\%$.  
+	The final accuracy on the valid set is $70.30\%$.
 	For what concerns the loss, it is clear that the model overfits the data. 
-	In fact, the train loss is next/close to while the validation one diverges.
+	In fact, the train loss is close to $0$ while the validation one 
+	diverges.
 	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l@{\hspace{.5cm}}cc|cc|c}
+			\toprule
+			& \multicolumn{2}{c}{\textbf{Accuracy}} & 
+			\multicolumn{2}{c}{\textbf{Loss}} & \multirow{2}*{\textbf{Train 
+					Time}} \\
+			& Train & Validation
+			& Train & Validation	& 						 		\\
+			\midrule
+			\textbf{Model 1} & 98.99\% & 70.30\%  & 0.05 & 4.20 & 406 sec \\
+			
+			\bottomrule 
+		\end{tabular}
+		\captionof{table}{Model performances}
+		\label{tab:performace-m1}
+	\end{table}
+
 	For this reason, in Section \ref{section:dropout} is presented a new model 
 	that has the aim of improving this results.
 	
@@ -179,26 +198,22 @@
 			& s. 
 			2$\times$2 & s. 2$\times$2 && \\
 			p. same & p. same & p. same  & p. same & p. same & p. same &&\\
-			 &  & dropout  &  &  & dropout & dropout & dropout\\
+			 &  & dropout  &  &  & dropout & dropout & \\
 			\bottomrule
 		\end{tabular}
 		\captionof{table}{Network architecture}
 		\label{tab:model1}
 	\end{figure}
+
 	The actual performance are shown in Figure \ref{fig:model1-performance}.
-		
-	As can be seen in Figures, the validation performance are legitimately 
-	better than the training one, since the regularisation is applied only to 
-	the train set and not to the validation.
+	as can be legitimately expected after the application of the dropout. 
+
+	Even if the performance on the training worsen respect to the previous 
+	model, due to the regularisation that is applied only on this set, the 
+	performance on the validation increased of $9.90\%$.
 	
-	In this experiment, the validation accuracy is $73.3\%$, a little better 
-	respect the previous model.
-	Instead, observing the loss curves, with this model there are no signs of 
-	overfitting but rather of underfitting. In fact, the training loss is  
-	greater than $1.5$ and the validation one is around $1$. Therefore, both 
-	have high values. For this reason, in the following section, some 
-	experiments will be attempted by modifying the values of the model's 
-	hyperparameters.
+	In this experiment, the validation accuracy is $80.20\%$, significantly 
+	better compared to the previous model.
 	
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
@@ -215,6 +230,29 @@
 		\caption{Training and validation curves on the regularised model}
 		\label{fig:model1-performance}
 	\end{figure}
+	
+	Instead, observing the loss curves, after the $30\mathrm{th}$ epochs it is 
+	possible to see some signs of overfitting. In this case, both the curves 
+	has low values. 
+	
+	\begin{table}[htb]
+		\centering
+		\begin{tabular}{l@{\hspace{.5cm}}cc|cc|c}
+			\toprule
+			& \multicolumn{2}{c}{\textbf{Accuracy}} & 
+			\multicolumn{2}{c}{\textbf{Loss}} & \multirow{2}*{\textbf{Train 
+					Time}} \\
+			& Train & Validation & Train & Validation & \\
+			\midrule
+			\textbf{Model 2} & 79.32\% & 80.20\%  & 0.60 & 0.61 & 415 sec \\
+			\bottomrule 
+		\end{tabular}
+		\captionof{table}{Model performances}
+		\label{tab:performace-m2}
+	\end{table}
+
+	In the following section will be attempted some additional experiments by 
+	modifying the model's hyperparameters.
 	  
 	\section{Hyperparameter settings}
 	\label{section:hyperparam}
@@ -428,16 +466,16 @@
 			& Train & Validation
 			& Train & Validation	& 						 		\\
 			\midrule
-			\textbf{Model 1} & 98.96\% & 72.00\%  & 0.05 & 3.79 & 427 sec \\
-			\textbf{Model 2} & 44.46\% & 73.30\%  & 1.48 & 0.89 & 427 sec \\
-			\textbf{Model 3} & 46.14\% & \textbf{75.50\%}  & 1.41 & 0.03 & 435 
+			\textbf{Model 1} & 98.99\% & 70.30\%  & 0.05 & 4.20 & 406 sec \\
+			\textbf{Model 2} & 79.32\% & 80.20\%  & 0.60 & 0.61 & 415 sec \\
+			\textbf{Model 3} & 77.70\% & \textbf{80.80\%}  & 0.63 & 0.61 & 445 
 			sec \\
-			\textbf{Model 4} & 36.60\% & 69.70\%  & 1.69 & 1.11 & 148 sec \\
-			\textbf{Model 5} & 48.65\% & \textbf{76.80\%}  & 1.32 & 0.74 & 150 
+			\textbf{Model 4} & 76.75\% & 79.40\%  & 0.65 & 0.61 & 148 sec \\
+			\textbf{Model 5} & 84.39\% & \textbf{81.40\%}  & 0.44 & 0.57 & 185 
 			sec \\
-			\textbf{Model 6} & 40.73\% & 64.50\%  & 1.61 & 1.10 & 153 sec \\
-			\textbf{Model 7} & 38.72\% & 61.80\%  & 1.29 & 0.03 & 123 sec \\
-			\textbf{Model 8} & 48.96\% & \textbf{79.40\%}  & 1.32 & 0.67 & 126 
+			\textbf{Model 6} & 71.03\% & 73.50\%  & 0.82 & 0.77 & 149 sec \\
+			\textbf{Model 7} & 65.37\% & 68.40\%  & 0.98 & 0.88 & 119 sec \\
+			\textbf{Model 8} & 83.60\% & \textbf{80.00\%}  & 0.46 & 0.59 & 120 
 			sec \\
 			\bottomrule 
 		\end{tabular}
@@ -621,23 +659,27 @@
 			& Train & Validation
 			& Train & Validation	& 						 		\\
 			\midrule
-			\textbf{Model 3}  & 46.14\% & 75.50\%  & 1.41 & 0.03 & 435 sec \\
-			\textbf{Model 3b} & 54.67\% & \textbf{85.40\%}  & 1.08 & 0.46 & 
-			2550 sec \\
-			\textbf{Model 4}  & 36.60\% & 69.70\%  & 1.69 & 1.11 & 148 sec \\
-			\textbf{Model 4b}  & 39.84\% & \textbf{78.40\%}  & 1.58 & 0.86 & 
-			916 sec \\
-			\textbf{Model 5}  & 48.65\% & 76.80\%  & 1.32 & 0.74 & 150 sec \\
-			\textbf{Model 5b} & 53.48\% & \textbf{82.10\%}  & 1.13 & 0.02 & 904 
+	
+			\textbf{Model 3} & 77.70\% & {80.80\%}  & 0.63 & 0.61 & 445 
 			sec \\
-			\textbf{Model 6}  & 40.73\% & 64.50\%  & 1.61 & 1.10 & 153 sec \\
-			\textbf{Model 6b} & 52.23\% & \textbf{82.70\%}  & 1.17 & 0.53 & 904 
+			\textbf{Model 3b} & 93.47\% & \textbf{85.70\%}  & 0.18 & 0.55 & 
+			2974 sec \\
+			\textbf{Model 4} & 76.75\% & 79.40\%  & 0.65 & 0.61 & 148 sec \\
+			\textbf{Model 4b}  & 84.60\% & \textbf{81.60\%}  & 0.44 & 0.56 & 
+			1040 sec \\
+			\textbf{Model 5} & 84.39\% & {81.40\%}  & 0.44 & 0.57 & 185 
 			sec \\
-			\textbf{Model 7}  & 38.72\% & 61.80\%  & 1.29 & 0.03 & 123 sec \\
-			\textbf{Model 7b} & 50.22\% & \textbf{79.40\%}  & 1.25 & 0.66 & 772 
+			\textbf{Model 5b} & 91.91\% & \textbf{81.40\%}  & 0.24 & 0.63 & 893 
 			sec \\
-			\textbf{Model 8}  & 48.96\% & 79.40\%  & 1.32 & 0.67 & 126 sec \\
-			\textbf{Model 8b} & 54.85\% & \textbf{81.00\%}  & 1.08 & 0.58 & 710 
+			\textbf{Model 6} & 71.03\% & 73.50\%  & 0.82 & 0.77 & 149 sec \\
+			\textbf{Model 6b} & 89.86\% & \textbf{84.30\%}  & 0.28 & 0.50 & 896 
+			sec \\
+			\textbf{Model 7} & 65.37\% & 68.40\%  & 0.98 & 0.88 & 119 sec \\
+			\textbf{Model 7b} & 87.08\% & \textbf{84.50\%}  & 0.36 & 0.52 & 707 
+			sec \\
+			\textbf{Model 8} & 83.60\% & {80.00\%}  & 0.46 & 0.59 & 120 
+			sec \\
+			\textbf{Model 8b} & 93.40\% & \textbf{84.90\%}  & 0.19 & 0.57 & 714 
 			sec \\
 			\bottomrule 
 		\end{tabular}
@@ -656,7 +698,8 @@
 	after the addition of a batch normalisation after the convolutional layers. 
 	These experiments has been carried out only on four of the models 
 	presented, the ones that have obtained the better performances.
-	%{FIXME} why apply batch normalisation?
+	%{FIXME} why apply batch normalisation? before relu etc... how is it 
+	%implemented? cite
 	\newline
 	
 	The first experiment is carried out on model 3, that is the one with the 
@@ -764,11 +807,11 @@
 			& Train & Validation
 			& Train & Validation	& 						 		\\
 			\midrule
-			\textbf{Model 3c} & 49.57\% & {81.60\%}  & 1.29 & 0.55 & 4171 sec \\
-			\textbf{Model 5c} & 55.65\% & {86.10\%}  & 1.04 & 0.44 & 1630 sec \\
-			\textbf{Model 6c} & 47.72\% & {80.00\%}  & 1.34 & 0.61 & 1625 sec \\
-			\textbf{Model 8c} & 55.85\% & \textbf{86.40\%}  & 1.03 & 0.47 & 
-			1204 sec \\
+			\textbf{Model 3c} & 87.15\% & {85.50\%}  & 0.37 & 0.46 & 4254 sec \\
+			\textbf{Model 5c} & 94.13\% & \textbf{86.70\%}  & 0.17 & 0.52 & 
+			1591 sec \\
+			\textbf{Model 6c} & 88.27\% & {84.70\%}  & 0.33 & 0.48 & 1616 sec \\
+			\textbf{Model 8c} & 94.87\% & {85.10\%}  & 0.14 & 0.57 & 1215 sec \\
 			\bottomrule 
 		\end{tabular}
 		\captionof{table}{Model performances after the batch normalisation}
