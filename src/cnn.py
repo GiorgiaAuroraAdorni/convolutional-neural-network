@@ -173,11 +173,12 @@ def net_param(model, learning_rate, batch_norm):
     :param model: current model
     :param learning_rate: learning rate of the model
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
-    :return X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train
+    :return X, Y, Z, dropout_mpool, dropout_fc, loss, accuracy, train
     """
     with tf.variable_scope("model_{}".format(model)):
         X = tf.placeholder(tf.float32, [None, 32, 32, 3], name='X')
         Y = tf.placeholder(tf.float32, [None, 10], name='Y')
+        # dropout = tf.placeholder(tf.float32, [], name='dropout')
         dropout_mpool = tf.placeholder(tf.float32, [], name='dropout_mpool')
         dropout_fc = tf.placeholder(tf.float32, [], name='dropout_fc')
 
@@ -191,7 +192,11 @@ def net_param(model, learning_rate, batch_norm):
         accuracy = tf.reduce_mean(tf.cast(hits, tf.float32))
 
         # Optimiser
+        beta1 = 2e-4
+        beta2 = 2e-3
+        epsilon = 1e-6
         optimizer = tf.train.AdamOptimizer(learning_rate)
+        # optimizer = tf.train.AdamOptimizer(learning_rate, beta1, beta2, epsilon)
         train = optimizer.minimize(loss)
 
         # opt = tf.train.GradientDescentOptimizer(learning_rate)
@@ -204,8 +209,8 @@ def conv_net(X, dropout_mpool, dropout_fc, batch_norm):
     """
 
     :param X: input
-    :param dropout_mpool: placeholder that represent the probability to keep each neuron (after the max pooling layers)
-    :param dropout_fc: placeholder that represent the probability to keep each neuron (after the fully connected layers)
+    :param d_mpool: placeholder that represent the probability to keep each neuron after max pooling layers.
+    :param d_fc: placeholder that represent the probability to keep each neuron after fully connected layers.
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
     :return Z: output
     """
@@ -352,8 +357,7 @@ def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, fina
             train_loss, train_accuracy, _ = session.run([loss, accuracy, train],
                                                         feed_dict={X: batch[0],
                                                                    Y: batch[1],
-                                                                   dropout_mpool: d_mpool,
-                                                                   dropout_fc: d_mpool})
+                                                                   dropout_mpool: d_mpool, dropout_fc: d_fc})
 
             avg_accuracy += train_accuracy * y_train[batch_indices].shape[0]
             avg_loss += train_loss * y_train[batch_indices].shape[0]
@@ -373,8 +377,7 @@ def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, fina
         validation_loss, validation_accuracy = session.run([loss, accuracy],
                                                            feed_dict={X: x_valid,
                                                                       Y: y_valid,
-                                                                      dropout_mpool: d_mpool,
-                                                                      dropout_fc: d_mpool})
+                                                                      dropout_mpool: 0, dropout_fc: 0})
         valid_end = time.time()
         valid_time = valid_end - valid_start
 
@@ -389,8 +392,7 @@ def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, fina
             test_loss, test_accuracy = session.run([loss, accuracy],
                                                    feed_dict={X: x_test,
                                                               Y: y_test,
-                                                              dropout_mpool: d_mpool,
-                                                              dropout_fc: d_mpool})
+                                                              dropout_mpool: 0, dropout_fc: 0})
             test_end = time.time()
             test_time = test_end - test_start
 
@@ -417,119 +419,129 @@ valid_accuracies = OrderedDict()
 # plot_setting(valid_accuracies, plot_dir, '1/', 50)
 
 ### Experiment 2 ###
-# main(check_dir(out_dir, '2/'), 1e-3, 32, 50, 0.5)
+# main(check_dir(out_dir, '2/'), 1e-3, 32, 50, 0.5, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '2/', 50)
 
 ### Experiment 2b ###
-# main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, 0.5)
+# main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, 0.5, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '2b/', 300)
 
 ### Experiment 3 ###
-# main(check_dir(out_dir, '3/'), 1e-4, 32, 50, 0.5)
+# main(check_dir(out_dir, '3/'), 1e-4, 32, 50, 0.5, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '3/', 50)
 
 ### Experiment 3b ###
-# main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, 0.5)
+# main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, 0.5, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '3b/', 300)
 
 ### Experiment 3c - batch normalisation ###
-# main(check_dir(out_dir, '3c/'), 1e-4, 32, 300, 0.5, batch_norm=True)
+# main(check_dir(out_dir, '3c/'), 1e-4, 32, 300, 0.5, 0.5, batch_norm=True)
 # plot_setting(valid_accuracies, plot_dir, '3c/', 300)
 
 ### Experiment 4 ###
-# main(check_dir(out_dir, '4/'), 1e-3, 128, 50, 0.6)
+# main(check_dir(out_dir, '4/'), 1e-3, 128, 50, 0.6, 0.6)
 # plot_setting(valid_accuracies, plot_dir, '4/', 50)
 
 ### Experiment 4b ###
-# main(check_dir(out_dir, '4b/'), 1e-3, 128, 300, 0.6)
+# main(check_dir(out_dir, '4b/'), 1e-3, 128, 300, 0.6, 0,6)
 # plot_setting(valid_accuracies, plot_dir, '4b/', 300)
 
 ### Experiment 5 ###
-# main(check_dir(out_dir, '5/'), 1e-3, 128, 50, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '5/', 50)
+# main(check_dir(out_dir, '5/'), 1e-3, 128, 50, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '5/', 50)
 
 ### Experiment 5b ###
-# main(check_dir(out_dir, '5b/'), 1e-3, 128, 300, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '5b/', 300)
+# main(check_dir(out_dir, '5b/'), 1e-3, 128, 300, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '5b/', 300)
 
 ### Experiment 5c ###
-main(check_dir(out_dir, '5c/'), 1e-3, 128, 300, 0.5, final=True, batch_norm=True)
-# plot_setting(valid_accuracies, plot_dir, '5c/', 300)
-# plot_setting(valid_accuracies, plot_dir, '5c-test/', 300, True)
+# main(check_dir(out_dir, '5c/'), 1e-3, 128, 300, 0.5, 0.5, final=True, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '5c/', 300)
+plot_setting(valid_accuracies, plot_dir, '5c-test/', 300, True)
 
-# main(check_dir(out_dir, '5d/'), 1e-3, 128, 300, 0.25, 0.5, batch_norm=True)
-# plot_setting(valid_accuracies, plot_dir, '5d/', 300)
+### Experiment 5d - different neurons for fc1 512 -> 1024 - no adam - no batch norm ###
+# main(check_dir(out_dir, '5d/'), 1e-3, 128, 50, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '5d/', 50)
 
-# main(check_dir(out_dir, '5f/'), 1e-3, 128, 300, 0.5, batch_norm=True)
-# plot_setting(valid_accuracies, plot_dir, '5f/', 300)
+### Experiment 5g - different neurons for fc1 512 -> 1024 - no adam ###
+# main(check_dir(out_dir, '5g/'), 1e-3, 128, 50, 0.5, 0.5, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '5g/', 50)
+
+### Experiment 5h - different neurons for fc1 512 -> 1024 - no adam - mutiepochs ###
+# main(check_dir(out_dir, '5h/'), 1e-3, 128, 300, 0.5, 0.5, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '5h/', 300)
+
+### Experiment 5i - different dropout & different neurons ###
+# main(check_dir(out_dir, '5i/'), 1e-3, 128, 50, 0.25, 0.5, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '5i/', 50)
 
 ### Experiment 6 ###
-# main(check_dir(out_dir, '6/'), 1e-4, 128, 50, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '6/', 50)
+# main(check_dir(out_dir, '6/'), 1e-4, 128, 50, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '6/', 50)
 
 ### Experiment 6b ###
-# main(check_dir(out_dir, '6b/'), 1e-4, 128, 300, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '6b/', 300)
+# main(check_dir(out_dir, '6b/'), 1e-4, 128, 300, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '6b/', 300)
 
 ### Experiment 6c - batch normalisation ######
-# main(check_dir(out_dir, '6c/'), 1e-4, 128, 300, 0.5, batch_norm=True)
-# plot_setting(valid_accuracies, plot_dir, '6c/', 300)
+# main(check_dir(out_dir, '6c/'), 1e-4, 128, 300, 0.5, 0.5, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '6c/', 300)
 
 ### Experiment 7 ###
-# main(check_dir(out_dir, '7/'), 1e-4, 256, 50, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '7/', 50)
+# main(check_dir(out_dir, '7/'), 1e-4, 256, 50, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '7/', 50)
 
 ### Experiment 7b ###
-# main(check_dir(out_dir, '7b/'), 1e-4, 256, 300, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '7b/', 300)
+# main(check_dir(out_dir, '7b/'), 1e-4, 256, 300, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '7b/', 300)
 
 ### Experiment 8 ###
-# main(check_dir(out_dir, '8/'), 1e-3, 256, 50, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '8/', 50)
+# main(check_dir(out_dir, '8/'), 1e-3, 256, 50, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '8/', 50)
 
 ### Experiment 8b ###
-# main(check_dir(out_dir, '8b/'), 1e-3, 256, 300, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '8b/', 300)
+# main(check_dir(out_dir, '8b/'), 1e-3, 256, 300, 0.5, 0.5)
+plot_setting(valid_accuracies, plot_dir, '8b/', 300)
 
 ### Experiment 8c ###
-# main(check_dir(out_dir, '8c/'), 1e-3, 256, 300, 0.5, batch_norm=True)
-# plot_setting(valid_accuracies, plot_dir, '8c/', 300)
+# main(check_dir(out_dir, '8c/'), 1e-3, 256, 300, 0.5, 0.5, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '8c/', 300)
 
 
 ################################################################################
 
 
-# main(check_dir(out_dir, '10/'), 1e-4, 64, 50, 0.5)
+# main(check_dir(out_dir, '10/'), 1e-4, 64, 50, 0.5, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '10/', 50)
 
-# main(check_dir(out_dir, '11/'), 1e-4, 64, 50, 0.4)
+# main(check_dir(out_dir, '11/'), 1e-4, 64, 50, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '11/', 50)
 
-# main(check_dir(out_dir, '12/'), 1e-4, 64, 20, 0.4)
+# main(check_dir(out_dir, '12/'), 1e-4, 64, 20, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '12/', 20)
 
-# main(check_dir(out_dir, '13/'), 1e-2, 64, 20, 0.4)
+# main(check_dir(out_dir, '13/'), 1e-2, 64, 20, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '13/', 20)
 
-# main(check_dir(out_dir, '14/'), 1e-3, 64, 50, 0.4)
+# main(check_dir(out_dir, '14/'), 1e-3, 64, 50, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '14/', 50)
 
-# main(check_dir(out_dir, '15/'), 1e-4, 32, 50, 0.4)
+# main(check_dir(out_dir, '15/'), 1e-4, 32, 50, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '15/', 50)
 
-# main(check_dir(out_dir, '16/'), 1e-5, 32, 50, 0.5)
+# main(check_dir(out_dir, '16/'), 1e-5, 32, 50, 0.5, 0.5)
 # plot_setting(valid_accuracies, plot_dir, '16/', 50)
 
-# main(check_dir(out_dir, '17/'), 1e-3, 32, 50, 0.4)
+# main(check_dir(out_dir, '17/'), 1e-3, 32, 50, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '17/', 50)
 
-# main(check_dir(out_dir, '18/'), 1e-3, 32, 20, 0.4)
+# main(check_dir(out_dir, '18/'), 1e-3, 32, 20, 0.4, 0.4)
 # plot_setting(valid_accuracies, plot_dir, '18/', 20)
 
-# main(check_dir(out_dir, '19/'), 1e-3, 128, 50, 0.7)
+# main(check_dir(out_dir, '19/'), 1e-3, 128, 50, 0.7, 0.7)
 # plot_setting(valid_accuracies, plot_dir, '19/', 50)
 
-# main(check_dir(out_dir, '20/'), 1e-3, 64, 50, 0.7)
+# main(check_dir(out_dir, '20/'), 1e-3, 64, 50, 0.7, 0.7)
 # plot_setting(valid_accuracies, plot_dir, '20/', 50)
 
 # main(check_dir(out_dir, '21/'), 1e-3, 64, 50, 0.6)
