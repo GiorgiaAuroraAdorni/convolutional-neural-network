@@ -167,11 +167,12 @@ def data_preparation(n_train):
     return scaled_x_train, scaled_x_valid, y_train_matrix, y_valid_matrix, scaled_x_test, y_test_matrix
 
 
-def net_param(model, learning_rate, batch_norm):
+def net_param(model, learning_rate, neurons_fc, batch_norm):
     """
 
     :param model: current model
     :param learning_rate: learning rate of the model
+    :param neurons_fc: number of units for the fully connected layer
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
     :return X, Y, Z, dropout_mpool, dropout_fc, loss, accuracy, train
     """
@@ -182,7 +183,7 @@ def net_param(model, learning_rate, batch_norm):
         dropout_mpool = tf.placeholder(tf.float32, [], name='dropout_mpool')
         dropout_fc = tf.placeholder(tf.float32, [], name='dropout_fc')
 
-        Z = conv_net(X, dropout_mpool, dropout_fc, batch_norm)
+        Z = conv_net(X, neurons_fc, dropout_mpool, dropout_fc, batch_norm)
 
         # Loss function
         loss = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=Z)
@@ -205,111 +206,107 @@ def net_param(model, learning_rate, batch_norm):
     return X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train
 
 
-def conv_net(X, dropout_mpool, dropout_fc, batch_norm):
+def create_conv_layer(filter_size, input_size, output_size, input, batch_norm):
+    """
+
+    :param filter_size: size of the filter
+    :param input_size: input size
+    :param output_size: number of neurons
+    :param input: input of the layer
+    :param batch_norm: boolean parameter that if is True is computed the batch normalisation
+    :return A_conv, W_conv
+    """
+    W_conv = tf.Variable(tf.truncated_normal([filter_size, filter_size, input_size, output_size], stddev=0.1))
+    b_conv = tf.Variable(tf.zeros(shape=(output_size,)))
+    A_conv = tf.nn.conv2d(input, W_conv, strides=[1, 1, 1, 1], padding='SAME') + b_conv
+
+    if batch_norm:
+        num_out_nodes = W_conv.shape[-1]
+        gamma = tf.Variable(tf.ones([num_out_nodes]))
+        beta = tf.Variable(tf.zeros([num_out_nodes]))
+        batch_mean, batch_variance = tf.nn.moments(A_conv, [0])
+        A_conv = tf.nn.batch_normalization(A_conv, batch_mean, batch_variance, beta, gamma, 1e-3)
+
+    A_conv = tf.nn.relu(A_conv)
+    return A_conv, W_conv
+
+
+def create_fc_layer(input_size, output_size, input, batch_norm):
+    """
+
+    :param input_size: input size
+    :param output_size: number of neurons
+    :param input: input of the layer
+    :param batch_norm: boolean parameter that if is True is computed the batch normalisation
+    :return A_fc
+    """
+    W_fc = tf.Variable(tf.truncated_normal([input_size, output_size], stddev=0.1))
+    b_fc = tf.Variable(tf.zeros(shape=(output_size,)))
+    A_fc = tf.matmul(input, W_fc) + b_fc
+
+    if batch_norm:
+        num_out_nodes = W_fc.shape[-1]
+        gamma = tf.Variable(tf.ones([num_out_nodes]))
+        beta = tf.Variable(tf.zeros([num_out_nodes]))
+        batch_mean, batch_variance = tf.nn.moments(A_fc, [0])
+        A_fc = tf.nn.batch_normalization(A_fc, batch_mean, batch_variance, beta, gamma, 1e-3)
+
+    A_fc = tf.nn.relu(A_fc)
+    return A_fc
+
+
+def conv_net(X, neurons_fc, dropout_mpool, dropout_fc, batch_norm):
     """
 
     :param X: input
+    :param neurons_fc: number of neurons for the fully connected layer
     :param d_mpool: placeholder that represent the probability to keep each neuron after max pooling layers.
     :param d_fc: placeholder that represent the probability to keep each neuron after fully connected layers.
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
     :return Z: output
     """
     # (a) Convolutional layer 1: 32 filters, 3 × 3.
-    W_conv1 = tf.Variable(tf.truncated_normal([3, 3, 3, 32], stddev=0.1))
-    b_conv1 = tf.Variable(tf.zeros(shape=(32,)))
-    A_conv1 = tf.nn.conv2d(X, W_conv1, strides=[1, 1, 1, 1], padding='SAME') + b_conv1
-
-    if batch_norm:
-        num_out_nodes = W_conv1.shape[-1]
-        gamma = tf.Variable(tf.ones([num_out_nodes]))
-        beta = tf.Variable(tf.zeros([num_out_nodes]))
-        batch_mean, batch_variance = tf.nn.moments(A_conv1, [0])
-        A_conv1 = tf.nn.batch_normalization(A_conv1, batch_mean, batch_variance, beta, gamma, 1e-3)
-
-    A_conv1 = tf.nn.relu(A_conv1)
+    A_conv1, W_conv1 = create_conv_layer(3, 3, 32, X, batch_norm)
 
     # (b) Convolutional layer 2: 32 filters, 3 × 3.
-    W_conv2 = tf.Variable(tf.truncated_normal([3, 3, 32, 32], stddev=0.1))
-    b_conv2 = tf.Variable(tf.zeros(shape=(32,)))
-    A_conv2 = tf.nn.conv2d(A_conv1, W_conv2, strides=[1, 1, 1, 1], padding='SAME') + b_conv2
-
-    if batch_norm:
-        num_out_nodes = W_conv2.shape[-1]
-        gamma = tf.Variable(tf.ones([num_out_nodes]))
-        beta = tf.Variable(tf.zeros([num_out_nodes]))
-        batch_mean, batch_variance = tf.nn.moments(A_conv2, [0])
-        A_conv2 = tf.nn.batch_normalization(A_conv2, batch_mean, batch_variance, beta, gamma, 1e-3)
-
-    A_conv2 = tf.nn.relu(A_conv2)
+    A_conv2, W_conv2 = create_conv_layer(3, 32, 32, A_conv1, batch_norm)
 
     # (c) Max-pooling layer 1: 2 × 2 windows.
     A_pool1 = tf.nn.max_pool(A_conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-
     A_pool1 = tf.nn.dropout(A_pool1, rate=dropout_mpool)
 
     # (d) Convolutional layer 3: 64 filters, 3 × 3.
-    W_conv3 = tf.Variable(tf.truncated_normal([3, 3, 32, 64], stddev=0.1))
-    b_conv3 = tf.Variable(tf.zeros(shape=(64,)))
-    A_conv3 = tf.nn.conv2d(A_pool1, W_conv3, strides=[1, 1, 1, 1], padding='SAME') + b_conv3
-
-    if batch_norm:
-        num_out_nodes = W_conv3.shape[-1]
-        gamma = tf.Variable(tf.ones([num_out_nodes]))
-        beta = tf.Variable(tf.zeros([num_out_nodes]))
-        batch_mean, batch_variance = tf.nn.moments(A_conv3, [0])
-        A_conv3 = tf.nn.batch_normalization(A_conv3, batch_mean, batch_variance, beta, gamma, 1e-3)
-
-    A_conv3 = tf.nn.relu(A_conv3)
+    A_conv3, W_conv3 = create_conv_layer(3, 32, 64, A_pool1, batch_norm)
 
     # (e) Convolutional layer 4: 64 filters, 3 × 3.
-    W_conv4 = tf.Variable(tf.truncated_normal([3, 3, 64, 64], stddev=0.1))
-    b_conv4 = tf.Variable(tf.zeros(shape=(64,)))
-    A_conv4 = tf.nn.conv2d(A_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME') + b_conv4
-
-    if batch_norm:
-        num_out_nodes = W_conv4.shape[-1]
-        gamma = tf.Variable(tf.ones([num_out_nodes]))
-        beta = tf.Variable(tf.zeros([num_out_nodes]))
-        batch_mean, batch_variance = tf.nn.moments(A_conv4, [0])
-        A_conv4 = tf.nn.batch_normalization(A_conv4, batch_mean, batch_variance, beta, gamma, 1e-3)
-
-    A_conv4 = tf.nn.relu(A_conv4)
+    A_conv4, W_conv4 = create_conv_layer(3, 64, 64, A_conv3, batch_norm)
 
     # (f) Max-pooling layer 2: 2 × 2 windows.
     A_pool2 = tf.nn.max_pool(A_conv4, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
     A_pool2 = tf.nn.dropout(A_pool2, rate=dropout_mpool)
-    A_pool2_flat = tf.reshape(A_pool2, [-1, 8 * 8 * 64])  # ? x 3136
+    A_pool2_flat = tf.reshape(A_pool2, [-1, 8 * 8 * 64])
 
     # (g) Fully connected layer 1: 512 units.
-    W_fc1 = tf.Variable(tf.truncated_normal([8 * 8 * 64, 512], stddev=0.1))
-    b_fc1 = tf.Variable(tf.zeros(shape=(512,)))
-    A_fc1 = tf.matmul(A_pool2_flat, W_fc1) + b_fc1
-
-    if batch_norm:
-        num_out_nodes = W_fc1.shape[-1]
-        gamma = tf.Variable(tf.ones([num_out_nodes]))
-        beta = tf.Variable(tf.zeros([num_out_nodes]))
-        batch_mean, batch_variance = tf.nn.moments(A_fc1, [0])
-        A_fc1 = tf.nn.batch_normalization(A_fc1, batch_mean, batch_variance, beta, gamma, 1e-3)
-
-    A_fc1 = tf.nn.relu(A_fc1)
+    A_fc1 = create_fc_layer(8 * 8 * 64, neurons_fc, A_pool2_flat, batch_norm)
     A_fc1 = tf.nn.dropout(A_fc1, rate=dropout_fc)
 
     # (h) Softmax output layer.
-    W_fc2 = tf.Variable(tf.truncated_normal([512, 10], stddev=0.1))
+    W_fc2 = tf.Variable(tf.truncated_normal([neurons_fc, 10], stddev=0.1))
     b_fc2 = tf.Variable(tf.zeros(shape=(10,)))
     Z = tf.matmul(A_fc1, W_fc2) + b_fc2
 
     return Z
 
 
-def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, final=False, batch_norm=False):
+def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, neurons_fc=512, final=False,
+         batch_norm=False):
     """
 
     :param set_dir: a list containing the path for the 3 output files containing the performances
     :param learning_rate: learning rate of the model
     :param batch_size: samples contained in each batch
     :param epochs: number of epochs for the model
+    :param neurons_fc: number of neurons for fully connected layer
     :param d_mpool: dropout represent the probability to keep each neuron during the training. The default value is 0 for
                     both, that corresponds to keep the neuron with probability 1 after max pooling layers.
     :param d_fc: dropout represent the probability to keep each neuron during the training. The default value is 0 for
@@ -318,7 +315,10 @@ def main(set_dir, learning_rate, batch_size, epochs, d_mpool=0.0, d_fc=0.0, fina
     :param batch_norm: boolean parameter that if is True is computed the batch normalisation
     """
     # Network Parameters
-    X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train = net_param(1, learning_rate, batch_norm)
+    X, Y, Z, dropout_mpool, dropout_fc, n_train, loss, accuracy, train = net_param(1,
+                                                                                   learning_rate,
+                                                                                   neurons_fc,
+                                                                                   batch_norm)
 
     f_train = open(set_dir[0], "w")
     f_valid = open(set_dir[1], "w")
@@ -416,35 +416,35 @@ valid_accuracies = OrderedDict()
 
 ### Experiment 1 ###
 # main(check_dir(out_dir, '1/'), 1e-3, 32, 50)
-# plot_setting(valid_accuracies, plot_dir, '1/', 50)
+plot_setting(valid_accuracies, plot_dir, '1/', 50)
 
 ### Experiment 2 ###
 # main(check_dir(out_dir, '2/'), 1e-3, 32, 50, 0.5, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '2/', 50)
+plot_setting(valid_accuracies, plot_dir, '2/', 50)
 
 ### Experiment 2b ###
 # main(check_dir(out_dir, '2b/'), 1e-3, 32, 300, 0.5, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '2b/', 300)
+plot_setting(valid_accuracies, plot_dir, '2b/', 300)
 
 ### Experiment 3 ###
 # main(check_dir(out_dir, '3/'), 1e-4, 32, 50, 0.5, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '3/', 50)
+plot_setting(valid_accuracies, plot_dir, '3/', 50)
 
 ### Experiment 3b ###
 # main(check_dir(out_dir, '3b/'), 1e-4, 32, 300, 0.5, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '3b/', 300)
+plot_setting(valid_accuracies, plot_dir, '3b/', 300)
 
 ### Experiment 3c - batch normalisation ###
 # main(check_dir(out_dir, '3c/'), 1e-4, 32, 300, 0.5, 0.5, batch_norm=True)
-# plot_setting(valid_accuracies, plot_dir, '3c/', 300)
+plot_setting(valid_accuracies, plot_dir, '3c/', 300)
 
 ### Experiment 4 ###
 # main(check_dir(out_dir, '4/'), 1e-3, 128, 50, 0.6, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '4/', 50)
+plot_setting(valid_accuracies, plot_dir, '4/', 50)
 
 ### Experiment 4b ###
 # main(check_dir(out_dir, '4b/'), 1e-3, 128, 300, 0.6, 0,6)
-# plot_setting(valid_accuracies, plot_dir, '4b/', 300)
+plot_setting(valid_accuracies, plot_dir, '4b/', 300)
 
 ### Experiment 5 ###
 # main(check_dir(out_dir, '5/'), 1e-3, 128, 50, 0.5, 0.5)
@@ -459,20 +459,20 @@ plot_setting(valid_accuracies, plot_dir, '5b/', 300)
 plot_setting(valid_accuracies, plot_dir, '5c/', 300)
 plot_setting(valid_accuracies, plot_dir, '5c-test/', 300, True)
 
-### Experiment 5d - different neurons for fc1 512 -> 1024 - no adam - no batch norm ###
-# main(check_dir(out_dir, '5d/'), 1e-3, 128, 50, 0.5, 0.5)
-plot_setting(valid_accuracies, plot_dir, '5d/', 50)
+### Experiment 5d - different neurons for fc1 512 -> 1024 - no batch norm ###
+# main(check_dir(out_dir, '10/'), 1e-3, 128, 50, 0.5, 0.5, 1024)
+plot_setting(valid_accuracies, plot_dir, '10/', 50)
 
-### Experiment 5g - different neurons for fc1 512 -> 1024 - no adam ###
-# main(check_dir(out_dir, '5g/'), 1e-3, 128, 50, 0.5, 0.5, batch_norm=True)
+### Experiment 5g - different neurons for fc1 512 -> 1024 ###
+# main(check_dir(out_dir, '5g/'), 1e-3, 128, 50, 0.5, 0.5, 1024, batch_norm=True)
 plot_setting(valid_accuracies, plot_dir, '5g/', 50)
 
-### Experiment 5h - different neurons for fc1 512 -> 1024 - no adam - mutiepochs ###
-# main(check_dir(out_dir, '5h/'), 1e-3, 128, 300, 0.5, 0.5, batch_norm=True)
-plot_setting(valid_accuracies, plot_dir, '5h/', 300)
+### Experiment 5h - different neurons for fc1 512 -> 1024 - mutiepochs ###
+# main(check_dir(out_dir, '10c/'), 1e-3, 128, 300, 0.5, 0.5, 1024, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '10c/', 300)
 
 ### Experiment 5i - different dropout & different neurons ###
-# main(check_dir(out_dir, '5i/'), 1e-3, 128, 50, 0.25, 0.5, batch_norm=True)
+# main(check_dir(out_dir, '5i/'), 1e-3, 128, 50, 0.25, 0.5, 1024, batch_norm=True)
 plot_setting(valid_accuracies, plot_dir, '5i/', 50)
 
 ### Experiment 6 ###
@@ -507,96 +507,105 @@ plot_setting(valid_accuracies, plot_dir, '8b/', 300)
 # main(check_dir(out_dir, '8c/'), 1e-3, 256, 300, 0.5, 0.5, batch_norm=True)
 plot_setting(valid_accuracies, plot_dir, '8c/', 300)
 
+### Experiment 9 - different dropout  ###
+# main(check_dir(out_dir, '9/'), 1e-3, 128, 50, 0.25, 0.5)
+plot_setting(valid_accuracies, plot_dir, '9/', 50)
+
+# main(check_dir(out_dir, '9b/'), 1e-3, 128, 300, 0.25, 0.5)
+plot_setting(valid_accuracies, plot_dir, '9b/', 300)
+
+# main(check_dir(out_dir, '9c/'), 1e-3, 128, 50, 0.25, 0.5, batch_norm=True)
+plot_setting(valid_accuracies, plot_dir, '9c/', 50)
 
 ################################################################################
 
 
 # main(check_dir(out_dir, '10/'), 1e-4, 64, 50, 0.5, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '10/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '10/', 50)
 
 # main(check_dir(out_dir, '11/'), 1e-4, 64, 50, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '11/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '11/', 50)
 
 # main(check_dir(out_dir, '12/'), 1e-4, 64, 20, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '12/', 20)
+# # plot_setting(valid_accuracies, plot_dir, '12/', 20)
 
 # main(check_dir(out_dir, '13/'), 1e-2, 64, 20, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '13/', 20)
+# # plot_setting(valid_accuracies, plot_dir, '13/', 20)
 
 # main(check_dir(out_dir, '14/'), 1e-3, 64, 50, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '14/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '14/', 50)
 
 # main(check_dir(out_dir, '15/'), 1e-4, 32, 50, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '15/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '15/', 50)
 
 # main(check_dir(out_dir, '16/'), 1e-5, 32, 50, 0.5, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '16/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '16/', 50)
 
 # main(check_dir(out_dir, '17/'), 1e-3, 32, 50, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '17/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '17/', 50)
 
 # main(check_dir(out_dir, '18/'), 1e-3, 32, 20, 0.4, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '18/', 20)
+# # plot_setting(valid_accuracies, plot_dir, '18/', 20)
 
 # main(check_dir(out_dir, '19/'), 1e-3, 128, 50, 0.7, 0.7)
-# plot_setting(valid_accuracies, plot_dir, '19/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '19/', 50)
 
 # main(check_dir(out_dir, '20/'), 1e-3, 64, 50, 0.7, 0.7)
-# plot_setting(valid_accuracies, plot_dir, '20/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '20/', 50)
 
 # main(check_dir(out_dir, '21/'), 1e-3, 64, 50, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '21/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '21/', 50)
 
 # main(check_dir(out_dir, '22/'), 1e-4, 64, 50, 0.7)
-# plot_setting(valid_accuracies, plot_dir, '22/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '22/', 50)
 
 # main(check_dir(out_dir, '23/'), 1e-4, 64, 50, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '23/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '23/', 50)
 
 # main(check_dir(out_dir, '24/'), 1e-4, 128, 50, 0.7)
-# plot_setting(valid_accuracies, plot_dir, '24/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '24/', 50)
 
 # main(check_dir(out_dir, '25/'), 1e-4, 128, 50, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '25/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '25/', 50)
 
 # main(check_dir(out_dir, '26/'), 1e-4, 128, 50, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '26/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '26/', 50)
 
 # main(check_dir(out_dir, '27/'), 1e-3, 128, 30, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '27/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '27/', 50)
 
 # main(check_dir(out_dir, '28/'), 0.005, 128, 50, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '28/', 50)
+# # plot_setting(valid_accuracies, plot_dir, '28/', 50)
 
 # main(check_dir(out_dir, '29/'), 1e-3, 32, 20, 0.3)
-# plot_setting(valid_accuracies, plot_dir, '29/', 20)
+# # plot_setting(valid_accuracies, plot_dir, '29/', 20)
 
 # main(check_dir(out_dir, '30/'), 1e-3, 128, 100, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '30/', 100)
+# # plot_setting(valid_accuracies, plot_dir, '30/', 100)
 
 # main(check_dir(out_dir, '31/'), 1e-4, 128, 100, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '31/', 100)
+# # plot_setting(valid_accuracies, plot_dir, '31/', 100)
 
 # main(check_dir(out_dir, '32/'), 1e-4, 128, 100, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '32/', 100)
+# # plot_setting(valid_accuracies, plot_dir, '32/', 100)
 
 # main(check_dir(out_dir, '33/'), 1e-4, 128, 200, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '33/', 200)
+# # plot_setting(valid_accuracies, plot_dir, '33/', 200)
 
 # main(check_dir(out_dir, '34/'), 1e-4, 256, 200, 0.6)
-# plot_setting(valid_accuracies, plot_dir, '34/', 200)
+# # plot_setting(valid_accuracies, plot_dir, '34/', 200)
 
 # main(check_dir(out_dir, '35/'), 1e-4, 256, 200, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '35/', 200)
+# # plot_setting(valid_accuracies, plot_dir, '35/', 200)
 
 # main(check_dir(out_dir, '36/'), 1e-4, 128, 200, 0.5)
-# plot_setting(valid_accuracies, plot_dir, '36/', 200)
+# # plot_setting(valid_accuracies, plot_dir, '36/', 200)
 
 # main(check_dir(out_dir, '37/'), 1e-3, 64, 20, 0.4)
-# plot_setting(valid_accuracies, plot_dir, '37/', 20)
+# # plot_setting(valid_accuracies, plot_dir, '37/', 20)
 
 # main(check_dir(out_dir, '38/'), 1e-3, 64, 20, 0.3)
-# plot_setting(valid_accuracies, plot_dir, '38/', 20)
+# # plot_setting(valid_accuracies, plot_dir, '38/', 20)
 
 ################################################################################
 
