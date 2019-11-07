@@ -28,6 +28,20 @@
 \usepackage{csquotes}
 \usepackage{subfigure}
 
+\newcommand{\footlabel}[2]{%
+	\addtocounter{footnote}{1}%
+	\footnotetext[\thefootnote]{%
+		\addtocounter{footnote}{-1}%
+		\refstepcounter{footnote}\label{#1}%
+		#2%
+	}%
+	$^{\ref{#1}}$%
+}
+
+\newcommand{\footref}[1]{%
+	$^{\ref{#1}}$%
+}
+
 \pagestyle{fancy}
 
 \setlength\parindent{24pt}
@@ -85,13 +99,12 @@
 	The architecture of the convolutional neural network follow the 
 	instructions provided, as well as the hyper-parameter values for the models 
 	presented in the Sections \ref{section:model0} and \ref{section:dropout}.
-	In the training phase, mini-batches were used. In particular, each 
+	In the training phase, mini-es were used. In particular, each 
 	epoch splits the training set in different samples of data.
 	
 	All the models were implemented using \texttt{TensorFlow} and trained on a 
 	NVIDIA Tesla V100-PCIE-16GB GPU.
 	
-	%FIXME
 	Note: Since mini-batches are used during the training of the models, the 
 	loss and the accuracy of all samples is averaged, obtaining a less noisy 
 	estimate.
@@ -712,12 +725,18 @@
 	\label{subsection:batchnorm}
 	
 	In this section are analysed the performances of the models 3c, 5c, 8c, 9c 
-	and 10c, after the addition of a batch normalisation before the application 
-	of the ReLU non-linearities. 
-	These experiments has been carried out only on five models, which are the 
+	and 10c, after the addition of a batch normalisation.
+	The main purpose of this change is to improve the performance and the 
+	stability of the network. 
+	The transform is introduced immediately before each ReLU non-linearity, in 
+	order to normalise the layer inputs 
+	\footlabel{note1}{Ioffe, S. and Szegedy, C., 2015. Batch normalization: 
+	Accelerating deep network training by reducing internal covariate shift. 
+	arXiv preprint arXiv:1502.03167.}.
+	%\footref{note1}. 
+	
+	This experiment has been carried out only on five models, which are the 
 	ones that have obtained the better performances, and for 300 epochs.
-	%{FIXME} why apply batch normalisation? before relu etc... how is it 
-	%implemented? cite
 	\newline
 	
 	The first experiment is carried out on model 3b, that is the one with the 
@@ -743,14 +762,14 @@
 	The learning curves are displayed in Figure \ref{fig:model3c-performance}. 
 	The validation accuracy is slightly worst compared to the one of the model 
 	without batch normalisation. In fact, the current one is decreased of 
-	$0.20\%$. %{FIXME: why?}
+	$0.20\%$.
 	\newline
 		
 	The next experiment is performed on model 5b. In this case, the batch 
 	normalisation increases the validation accuracy of the previous model of 
 	$5.3\%$, reaching the new best results of $86.5\%$, as shown in Figure 
 	\ref{fig:model5c-performance}.
-	
+
 	\begin{figure}[htb]
 		\begin{minipage}[c]{.49\textwidth}
 			\centering
@@ -767,6 +786,10 @@
 			normalisation)}
 		\label{fig:model5c-performance}
 	\end{figure}
+	
+	Probably, the reason why model 5c has best performance than 3c is that 
+	batch normalisation works better with higher learning rate.
+	\newline
 	
 	The experiment performed on model 8c has achieved lower result respect to 
 	model 5c even if further increasing the validation accuracy of $0.20\%$ of 
