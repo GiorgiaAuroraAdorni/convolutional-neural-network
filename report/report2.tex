@@ -96,17 +96,17 @@
 	between 0 and 9, three binary assignment matrices have been created, one 
 	for each set of data. 
 	
-	The architecture of the convolutional neural network follow the 
+	The architecture of the convolutional neural network follows the 
 	instructions provided, as well as the hyper-parameter values for the models 
-	presented in the Sections \ref{section:model0} and \ref{section:dropout}.
+	presented in Sections \ref{section:model0} and \ref{section:dropout}.
 	In the training phase, mini-es were used. In particular, each 
 	epoch splits the training set in different samples of data.
 	
-	All the models were implemented using \texttt{TensorFlow} and trained on a 
+	All the models were implemented using \texttt{TensorFlow} and trained on an 
 	NVIDIA Tesla V100-PCIE-16GB GPU.
 	
 	Note: Since mini-batches are used during the training of the models, the 
-	loss and the accuracy of all samples is averaged, obtaining a less noisy 
+	loss and the accuracy of all samples are averaged, obtaining a less noisy 
 	estimate.
 	
 	\section{Performance of the initial model}
@@ -139,7 +139,7 @@
 	As loss function, the Softmax Cross Entropy with Logits is used since the 
 	model is a multi-class classifier. Moreover, once per epoch, is documented 
 	the classification accuracy on both the train and validation set.
-	The performance are shown in Figure \ref{fig:model0-performance}.
+	The performance is shown in Figure \ref{fig:model0-performance}.
 	
 	\begin{figure}[H]
 		\begin{minipage}[c]{.49\textwidth}
@@ -153,15 +153,15 @@
 			\includegraphics[width=\linewidth]{../src/out/img/1-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on the initial model}
+		\caption{Training and validation curves in the initial model}
 		\label{fig:model0-performance}
 	\end{figure}
 	
-	As can be seen in Figure (a), the train accuracy rapidly grows up to 
+	As can be seen in Figure (a), the training accuracy rapidly grows up to 
 	$100\%$, while the validation accuracy remains stable at $70\%$.  
 	The final accuracy on the valid set is $70.30\%$.
 	For what concerns the loss, it is clear that the model overfits the data. 
-	In fact, the train loss is close to $0$ while the validation one 
+	The training loss is close to $0$ while the validation one 
 	diverges.
 	
 	\begin{table}[H]
@@ -183,14 +183,14 @@
 	\end{table}
 
 	For this reason, in Section \ref{section:dropout} is presented a new model 
-	that has the aim of improving this results.
+	that has the aim of improving these results.
 	
 	\section{Regularisation of the model with dropout}
 	\label{section:dropout}
 	The model proposed in this section involve the use of a model 
 	regularisation technique, that is the addition of a dropout layer after 
 	each max-pooling and fully-connected layer. In particular, during the 
-	training phase, the probability to keep each neuron is setted to $0.5$, 
+	training phase, the probability to keep each neuron is set to $0.5$, 
 	while in the validation set should be $1$.	
 	
 	The architecture of the new network is presented in Table \ref{tab:model1}.	
@@ -218,13 +218,13 @@
 		\label{tab:model1}
 	\end{figure}
 
-	The actual performance are shown in Figure \ref{fig:model1-performance}.
+	The actual performance is shown in Figure \ref{fig:model1-performance}.
 	The performances legitimately improved as expected after the application of 
 	the dropout. 
 
 	Even if the performance on the training worsen respect to the previous 
 	model, since the regularisation is applied only on this set, the 
-	performance on the validation increased of $9.90\%$. Now its value is 
+	performance on the validation increased by $9.90\%$. Now its value is 
 	$80.20\%$, significantly better compared to the previous model.
 	
 	\begin{figure}[htb]
@@ -239,7 +239,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/2-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on the regularised model}
+		\caption{Training and validation curves in the regularised model}
 		\label{fig:model1-performance}
 	\end{figure}
 	
@@ -268,14 +268,13 @@
 	\section{Hyperparameter settings}
 	\label{section:hyperparam}
 	
-	In this section will be discussed $6$ different additional configuration 
-	for the hyperparameters of the network, with the aim of improving the 
-	validation accuracy. In particular, will be documented the performances 
-	according to the modification of the following hyperparameters: learning 
-	rate, mini-batch size, dropout and number of epochs. In this analysis, only 
-	the models with the best performances will be included. In Table 
-	\ref{tab:param1} are documented the different hyperparameter setted for the 
-	models. 
+	In this section will be discussed $6$ different additional configurations 
+	for the hyperparameters of the network, to improve the validation accuracy. 
+	In particular, will be documented the performances according to the 
+	modification of the following hyperparameters: learning rate, mini-batch 
+	size, dropout and number of epochs. In this analysis, only the models with 
+	the best performances will be included. In Table \ref{tab:param1} are 
+	documented the different hyperparameter set for the models. 
 	
 	\begin{table}[htb]
 		\centering
@@ -328,12 +327,12 @@
 			\includegraphics[width=\linewidth]{../src/out/img/3-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 3}
+		\caption{Training and validation curves in model 3}
 		\label{fig:model3-performance}
 	\end{figure}
 		
-	In the Section \ref{subsection:epochs} will be discussed a further 
-	modification to this model that consist in increasing the number of 
+	In Section \ref{subsection:epochs} will be discussed a further 
+	modification to this model that consists of increasing the number of 
 	epochs, since the trend of the curve seems to be growing.
 	\newline 
 	
@@ -355,21 +354,22 @@
 			\includegraphics[width=\linewidth]{../src/out/img/4-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 4}
+		\caption{Training and validation curves in model 4}
 		\label{fig:model4-performance}
 	\end{figure}
 
-	In this case, the performance are very similar to the previous experiment, 
+	In this case, the performance is very similar to the previous experiment, 
 	even if slightly worse. The validation accuracy is reduced to 
 	$79.4\%$ despite the validation loss is still the same, as can be seen in 
 	Figure \ref*{fig:model5-performance}.
 	\newline
 	
-	In Model 5, number or samples for batches and the learning rate are kept 
+	In Model 5, the number of samples for batches and the learning rate are 
+	kept 
 	equal to the previous experiment, while the dropout has been restored to 
 	its original value. 
 	The current validation accuracy has begun to rise again, reaching $81.4\%$ 
-	and improving the performance of the model 3. However, as it can be seen in 
+	and improving the performance of model 3. However, as it can be seen in 
 	Figure \ref{fig:model4-performance}, the validation curve, initially 
 	promising, after the $30\mathrm{th}$ epoch it falls below the training 
 	curve.
@@ -386,19 +386,19 @@
 			\includegraphics[width=\linewidth]{../src/out/img/5-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 5}
+		\caption{Training and validation curves in model 5}
 		\label{fig:model5-performance}
 	\end{figure}
 
-	For the next two experiments it was decided to set the learning rate to the 
-	previous value of $0.0001$ and restore the dropout to his original value of 
-	$0.5$. Instead, the number of examples in the batch for the model 6 has 
-	been kept equal to the previous experiments, that is $128$ and increase up 
-	to $256$ for the model 7. 
+	For the next two experiments, it was decided to set the learning rate to 
+	the previous value of $0.0001$ and restore the dropout to his original 
+	value of $0.5$. Instead, the number of examples in the batch for model 6 
+	has been kept equal to the previous experiments, that is $128$ and increase 
+	up to $256$ for model 7. 
 
-	Unfortunately, in both cases the performance has deteriorated compared to 
+	Unfortunately, in both cases, the performance has deteriorated compared to 
 	all the previous performances. The first model has a validation accuracy of 
-	$73.50\%$, while the second fell down to $68.40\%$, that is the worst result
+	$73.50\%$, while the second fell to $68.40\%$, that is the worst result
 	measured so far.
 	\newline
 	
@@ -420,14 +420,15 @@
 			\includegraphics[width=\linewidth]{../src/out/img/8-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 8}
+		\caption{Training and validation curves in model 8}
 		\label{fig:model8-performance}
 	\end{figure}
 
-	In the last experiment a further attempted modification foresees in the use 
-	of different dropouts based on its application after a max pooling or a 
-	fully connected layer. In particular, the rate of the dropout is setted to 
-	$0.25$ after the max pooling layers and kept to $0.5$ after the fully 
+	In the last experiment, a further attempted modification foresees in the 
+	use 
+	of different dropouts based on its application after a max-pooling or a 
+	fully connected layer. In particular, the rate of the dropout is set to 
+	$0.25$ after the max-pooling layers and kept to $0.5$ after the fully 
 	connected layer.
 	
 	\begin{figure}[htb]
@@ -442,7 +443,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/9-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 9}
+		\caption{Training and validation curves in model 9}
 		\label{fig:model9-performance}
 	\end{figure}
 	The performances of the model are shown in Figure 
@@ -451,8 +452,8 @@
 	\newline
 	
 	In Table \ref{tab:performace1} are summarised the performance of the 
-	presented models. Among the documented model, the best achieved are the 
-	model 5, model 3 and model 2. 
+	presented models. Among the documented model, the best achieved are model 
+	5, model 3 and model 2. 
 	In the following section will be presented the performances of some 
 	models after the increase of training epochs.
 	
@@ -489,13 +490,13 @@
 	\subsection{Modification of the number of hidden units}
 	\label{subsection:hidden units}
 	
-	In this section will be discussed a modification to the current best model, 
-	which is the model 5, that consists in an increasing of the number of 
-	hidden units of the fully connected layer from $512$ up tp $1024$.
+	In this section will be discussed modification to the current best model, 
+	which is the model 5, that consists in an increase of the number of 
+	hidden units of the fully connected layer from $512$ up to $1024$.
 	
-	Since the learning curve of network, shown in the previous section, seems 
-	to be underfitting, increasing the complexity of the network should be a 
-	good idea. The new performances are shown in Figure 
+	Since the learning curve of the network, shown in the previous section, 
+	seems to be underfitting, increasing the complexity of the network should 
+	be a good idea. The new performances are shown in Figure 
 	\ref{fig:model10-performance}.
 	
 	\begin{figure}[htb]
@@ -510,7 +511,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/10-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 10}
+		\caption{Training and validation curves in model 10}
 		\label{fig:model10-performance}
 	\end{figure}
 	
@@ -544,14 +545,14 @@
 	In this section are analysed the performances of the previous models 
 	trained for a greater number of epochs. 
 	
-	These experiments has been carried out only on models 3, 4, 5, 8 and 9, 
+	These experiments have been carried out only on models 3, 4, 5, 8 and 9 
 	since they shown better accuracy values. 
 	
 	The models are trained on GPU which allows training without worsening the 
 	time too much.
 	\newline
 	
-	The first experiment was performed on model 3, which curves are shown in 
+	The first experiment were performed on model 3, which curves are shown in 
 	Figure \ref{fig:model3b-performance}. 
 		
 	\begin{figure}[htb]
@@ -566,7 +567,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/3b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 3b}
+		\caption{Training and validation curves in model 3b}
 		\label{fig:model3b-performance}
 	\end{figure}
 
@@ -588,14 +589,14 @@
 			\includegraphics[width=\linewidth]{../src/out/img/4b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 4b}
+		\caption{Training and validation curves in model 4b}
 		\label{fig:model4b-performance}
 	\end{figure}
 
 	The results obtained, shown in Figure \ref{fig:model4b-performance}, are 
 	worse than those obtained from the previous model. The validation accuracy 
-	is fallen down to $81.60\%$. In this case, the validation accuracy obtained 
-	is more or less the same of the one achieved with only $50$ epochs.
+	is fallen to $81.60\%$. In this case, the validation accuracy obtained 
+	is more or less the same as the one achieved with only $50$ epochs.
 	\newline
 	
 	Continuing, the results for the model 5b are shown in Figure 
@@ -615,7 +616,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/5b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 5b}
+		\caption{Training and validation curves in model 5b}
 		\label{fig:model5b-performance}
 	\end{figure}
 
@@ -641,19 +642,19 @@
 			\includegraphics[width=\linewidth]{../src/out/img/8b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 8b}
+		\caption{Training and validation curves in model 8b}
 		\label{fig:model8b-performance}
 	\end{figure}
 
-	The situation presented, in particular the trend of the train and 
+	The situation presented, in particular, the trend of the train and 
 	validation accuracy curve, shown in Figure \ref{fig:model8b-performance}, 
-	is very similar to the one which occurred with the model 5. This is because 
+	is very similar to the one which occurred with model 5. This is because, 
 	after a certain epoch, both the model have stopped or significantly slowed 
 	down the learning.
 	\newline
 
 	The last experiment was performed on model 9. Despite the performance is 
-	better than the latest, it does not revealed a significant increase in 
+	better than the latest, it does not reveal a significant increase in 
 	performance compared to the latest and, above all, respect to model 3b. 
 			
 	\begin{figure}[htb]
@@ -668,7 +669,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/9b-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 9b}
+		\caption{Training and validation curves in model 9b}
 		\label{fig:model9b-performance}
 	\end{figure}
 	
@@ -725,7 +726,7 @@
 	\label{subsection:batchnorm}
 	
 	In this section are analysed the performances of the models 3c, 5c, 8c, 9c 
-	and 10c, after the addition of a batch normalisation.
+	and 10c, after the addition of batch normalisation.
 	The main purpose of this change is to improve the performance and the 
 	stability of the network. 
 	The transform is introduced immediately before each ReLU non-linearity, in 
@@ -736,7 +737,7 @@
 	%\footref{note1}. 
 	
 	This experiment has been carried out only on five models, which are the 
-	ones that have obtained the better performances, and for 300 epochs.
+	ones that have obtained better performances, and for 300 epochs.
 	\newline
 	
 	The first experiment is carried out on model 3b, that is the one with the 
@@ -754,14 +755,14 @@
 			\includegraphics[width=\linewidth]{../src/out/img/3c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 3c (with batch 
+		\caption{Training and validation curves in model 3c (with batch 
 			normalisation)}
 		\label{fig:model3c-performance}
 	\end{figure}
 
 	The learning curves are displayed in Figure \ref{fig:model3c-performance}. 
-	The validation accuracy is slightly worst compared to the one of the model 
-	without batch normalisation. In fact, the current one is decreased of 
+	The validation accuracy is slightly worst compared to that of the model 
+	without batch normalisation. In fact, the current one is decreased by 
 	$0.20\%$.
 	\newline
 		
@@ -782,13 +783,13 @@
 			\includegraphics[width=\linewidth]{../src/out/img/5c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 5c (with batch 
+		\caption{Training and validation curves in model 5c (with batch 
 			normalisation)}
 		\label{fig:model5c-performance}
 	\end{figure}
 	
-	Probably, the reason why model 5c has best performance than 3c is that 
-	batch normalisation works better with higher learning rate.
+	Probably, the reason why model 5c has better performance than 3c is that 
+	batch normalisation works better with a higher learning rate.
 	\newline
 	
 	The experiment performed on model 8c has achieved lower result respect to 
@@ -809,7 +810,7 @@
 			\includegraphics[width=\linewidth]{../src/out/img/8c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 8c (with batch 
+		\caption{Training and validation curves in model 8c (with batch 
 			normalisation)}
 		\label{fig:model8c-performance}
 	\end{figure}
@@ -831,13 +832,13 @@
 			\includegraphics[width=\linewidth]{../src/out/img/9c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 9c (with batch 
+		\caption{Training and validation curves in model 9c (with batch 
 			normalisation)}
 		\label{fig:model9c-performance}
 	\end{figure}
 	
-	The last experiment performed has achieved good result, in particular 
-	reaching a validation accuracy of $85.70\%$. Despite this results, the 
+	The last experiment performed has achieved a good result, in particular 
+	reaching a validation accuracy of $85.70\%$. Despite these results, the 
 	model does not improve the performance of model 5c.
 	The performances are shown in Figure \ref{fig:model10c-performance}.
 	\newline
@@ -854,14 +855,14 @@
 			\includegraphics[width=\linewidth]{../src/out/img/10c-Loss.png}
 			\caption*{(b)}
 		\end{minipage}
-		\caption{Training and validation curves on model 10c (with batch 
+		\caption{Training and validation curves in model 10c (with batch 
 			normalisation)}
 		\label{fig:model10c-performance}
 	\end{figure}
 
 
-	The following Table summarise the latest results obtained, highlighting 
-	the model 5c as the best over all the experiments presented.
+	The following table summarises the latest results obtained, highlighting 
+	model 5c is the best of all the experiments presented.
 	
 	\begin{table}[H]
 		\centering
@@ -890,10 +891,10 @@
 	\section{Test set accuracy} 
 	\label{section:finalmodel}
 	The test set accuracy was measured on the model 5c, that was the one which 
-	present the best performance. As can be seen in Figure 
+	presents the best performance. As can be seen in Figure 
 	\ref{fig:model5c-test-performance} and summarised in Table 
 	\ref{tab:performace-m5c}, also on the test the performances of the model 
-	are high. The test accuracy reached $85.36\%$, just $1.14\%$ worst than the 
+	are high. The test accuracy reached $85.36\%$, just $1.14\%$ worse than the 
 	validation, and the test loss is $0.50$.
 	
 	\begin{figure}[htb]
@@ -924,7 +925,7 @@
 			0.47 & \textbf{0.50} \\
 			\bottomrule 
 		\end{tabular}
-		\captionof{table}{Test set performances of the choosen model}
+		\captionof{table}{Test set performances of the chosen model}
 		\label{tab:performace-m5c}
 	\end{table}
 
